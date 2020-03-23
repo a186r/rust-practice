@@ -1,0 +1,8 @@
+[package]
+name = "head-first"
+version = "0.1.0"
+authors = ["a186r"]
+edition = "2020"
+
+[dependencies]
+merkle_tree = { package = "merkle_tree", path = "merkle-tree" }
