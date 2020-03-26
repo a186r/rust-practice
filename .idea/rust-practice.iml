@@ -11,6 +11,21 @@
       <sourceFolder url="file://$MODULE_DIR$/head-first/async-primer/sync-example/examples" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/head-first/async-primer/sync-example/tests" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/head-first/async-primer/sync-example/benches" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/head-first/async-primer/multi-example/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/head-first/async-primer/multi-example/examples" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/head-first/async-primer/multi-example/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/head-first/async-primer/multi-example/benches" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/head-first/async-primer/lazy_static/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/head-first/async-primer/lazy_static/examples" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/head-first/async-primer/lazy_static/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/head-first/async-primer/lazy_static/benches" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/head-first/async-primer/async-example/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/head-first/async-primer/async-example/examples" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/head-first/async-primer/async-example/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/head-first/async-primer/async-example/benches" isTestSource="true" />
+      <excludeFolder url="file://$MODULE_DIR$/head-first/async-primer/async-example/target" />
+      <excludeFolder url="file://$MODULE_DIR$/head-first/async-primer/lazy_static/target" />
+      <excludeFolder url="file://$MODULE_DIR$/head-first/async-primer/multi-example/target" />
       <excludeFolder url="file://$MODULE_DIR$/head-first/async-primer/sync-example/target" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>

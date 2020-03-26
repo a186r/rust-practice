@@ -1,0 +1,11 @@
+/Users/a186r/dev/rust/rust-practice/head-first/async-primer/async-example/target/rls/debug/deps/futures_core-b48a9c1c3be203f5.rmeta: /Users/a186r/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-core-0.3.4/src/lib.rs /Users/a186r/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-core-0.3.4/src/future.rs /Users/a186r/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-core-0.3.4/src/stream.rs /Users/a186r/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-core-0.3.4/src/task/mod.rs /Users/a186r/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-core-0.3.4/src/task/poll.rs /Users/a186r/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-core-0.3.4/src/task/__internal/mod.rs /Users/a186r/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-core-0.3.4/src/task/__internal/atomic_waker.rs
+
+/Users/a186r/dev/rust/rust-practice/head-first/async-primer/async-example/target/rls/debug/deps/futures_core-b48a9c1c3be203f5.d: /Users/a186r/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-core-0.3.4/src/lib.rs /Users/a186r/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-core-0.3.4/src/future.rs /Users/a186r/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-core-0.3.4/src/stream.rs /Users/a186r/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-core-0.3.4/src/task/mod.rs /Users/a186r/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-core-0.3.4/src/task/poll.rs /Users/a186r/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-core-0.3.4/src/task/__internal/mod.rs /Users/a186r/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-core-0.3.4/src/task/__internal/atomic_waker.rs
+
+/Users/a186r/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-core-0.3.4/src/lib.rs:
+/Users/a186r/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-core-0.3.4/src/future.rs:
+/Users/a186r/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-core-0.3.4/src/stream.rs:
+/Users/a186r/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-core-0.3.4/src/task/mod.rs:
+/Users/a186r/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-core-0.3.4/src/task/poll.rs:
+/Users/a186r/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-core-0.3.4/src/task/__internal/mod.rs:
+/Users/a186r/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-core-0.3.4/src/task/__internal/atomic_waker.rs:
