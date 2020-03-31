@@ -18,17 +18,6 @@ canvas.width = (CELL_SIZE + 1) * width + 1;
 
 const ctx = canvas.getContext('2d');
 
-const renderLoop = () => {
-    universe.tick();
-
-    drawGrid();
-    drawCells();
-
-    requestAnimationFrame(renderLoop);
-};
-
-// requestAnimationFrame(renderLoop);
-
 //为了绘制细胞之间的网格，我们绘制一组等间隔的水平线和一组等间隔的垂直线，形成网格
 const drawGrid = () => {
     ctx.beginPath();
@@ -74,6 +63,41 @@ const drawCells = () => {
     ctx.stroke();
 };
 
-drawGrid();
-drawCells();
-requestAnimationFrame(renderLoop);
+let animationId = null;
+
+const renderLoop = () => {
+    drawGrid();
+    drawCells();
+
+    universe.tick();
+
+    animationId = requestAnimationFrame(renderLoop);
+};
+
+// 在任何时刻我们都可以通过检查animationId的值来判断游戏是否暂停
+const isPaused = () => {
+    return animationId === null;
+};
+
+const playPauseButton = document.getElementById("play-pause");
+
+const play = () => {
+    playPauseButton.textContent = "⏸";
+    renderLoop();
+};
+
+const pause = () => {
+    playPauseButton.textContent = "▶";
+    cancelAnimationFrame(animationId);
+    animationId = null;
+};
+
+playPauseButton.addEventListener("click", event => {
+    if (isPaused()) {
+        play();
+    }else{
+        pause();
+    }
+});
+
+play();
