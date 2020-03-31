@@ -45,30 +45,38 @@ impl Universe {
     pub fn tick(&mut self) {
         //每次调用Universe::tick花费的时间输出到控制台
         let _timer = Timer::new("Universe::tick");
-        let mut next = self.cells.clone();
 
-        for row in 0..self.height {
-            for col in 0..self.width {
-                let idx = self.get_index(row, col);
-                let cell = self.cells[idx];
-                let live_neighbors = self.live_neighbor_count(row, col);
+        let mut next = {
+            let _timer = Timer::new("allocate next cells");
+            self.cells.clone()
+        };
 
-                let next_cell = match (cell, live_neighbors) {
-                    //    规则1，任何存活细胞周围少于2个存活邻居则死亡，仿佛是人口过少造成的
-                    (Cell::Alive, x) if x < 2 => Cell::Dead,
-                    //    规则2，任何存活细胞周围有2个或者3个存活邻居则活到下一代
-                    (Cell::Alive, 2) | (Cell::Alive, 3) => Cell::Alive,
-                    //规则3，任何存活细胞周围有超过3个存活邻居则死亡，仿佛是人口过剩造成的
-                    (Cell::Alive, x) if x > 3 => Cell::Dead,
-                    //    规则4，任何死亡细胞周围有正好3个存活细胞则变成存活细胞，仿佛是生殖
-                    (Cell::Dead, 3) => Cell::Alive,
-                    //    其他所有单元格保持同样的状态
-                    (otherwise, _) => otherwise,
-                };
-                log!("    it becomes {:?}", next_cell);
-                next[idx] = next_cell;
+        {
+            let _timer = Timer::new("new generation");
+            for row in 0..self.height {
+                for col in 0..self.width {
+                    let idx = self.get_index(row, col);
+                    let cell = self.cells[idx];
+                    let live_neighbors = self.live_neighbor_count(row, col);
+
+                    let next_cell = match (cell, live_neighbors) {
+                        //    规则1，任何存活细胞周围少于2个存活邻居则死亡，仿佛是人口过少造成的
+                        (Cell::Alive, x) if x < 2 => Cell::Dead,
+                        //    规则2，任何存活细胞周围有2个或者3个存活邻居则活到下一代
+                        (Cell::Alive, 2) | (Cell::Alive, 3) => Cell::Alive,
+                        //规则3，任何存活细胞周围有超过3个存活邻居则死亡，仿佛是人口过剩造成的
+                        (Cell::Alive, x) if x > 3 => Cell::Dead,
+                        //    规则4，任何死亡细胞周围有正好3个存活细胞则变成存活细胞，仿佛是生殖
+                        (Cell::Dead, 3) => Cell::Alive,
+                        //    其他所有单元格保持同样的状态
+                        (otherwise, _) => otherwise,
+                    };
+                    log!("    it becomes {:?}", next_cell);
+                    next[idx] = next_cell;
+                }
             }
         }
+        let _timer = Timer::new("free old cells");
         self.cells = next;
     }
 
