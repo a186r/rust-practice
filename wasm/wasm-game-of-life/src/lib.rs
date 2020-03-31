@@ -107,9 +107,9 @@ impl Universe {
     fn live_neighbor_count(&self, row: u32, column: u32) -> u8 {
         let mut count = 0;
 
-        let north = if now == 0 { self.height - 1 } else { row - 1 };
+        let north = if row == 0 { self.height - 1 } else { row - 1 };
 
-        let south = if now == self.height - 1 { 0 } else { row + 1 };
+        let south = if row == self.height - 1 { 0 } else { row + 1 };
 
         let west = if column == 0 {
             self.width - 1
