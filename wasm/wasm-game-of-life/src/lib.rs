@@ -1,14 +1,21 @@
 mod utils;
-
 use std::fmt;
 use wasm_bindgen::__rt::core::fmt::{Error, Formatter};
 use wasm_bindgen::prelude::*;
+extern crate web_sys;
 
 // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
 // allocator.
 #[cfg(feature = "wee_alloc")]
 #[global_allocator]
 static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
+
+//将console.log封装成一个println!风格的宏
+macro_rules! log {
+    ( $( $t:tt )* ) => {
+        web_sys::console::log_1(&format!( $( $t )* ).into());
+    }
+}
 
 #[wasm_bindgen]
 //每个单元格被表示为单个字节
@@ -51,7 +58,7 @@ impl Universe {
                     //    其他所有单元格保持同样的状态
                     (otherwise, _) => otherwise,
                 };
-
+                log!("    it becomes {:?}", next_cell);
                 next[idx] = next_cell;
             }
         }
