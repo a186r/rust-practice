@@ -118,6 +118,22 @@ impl Universe {
     pub fn cells(&self) -> *const Cell {
         self.cells.as_ptr()
     }
+
+    /// 设置宇宙的宽度
+    ///
+    /// 重置所有细胞为Dead状态
+    pub fn set_width(&mut self, width: u32) {
+        self.width = width;
+        self.cells = (0..width * self.height).map(|_i| Cell::Dead).collect();
+    }
+
+    /// 设置宇宙的高度
+    ///
+    /// 重置所有细胞为Dead状态
+    pub fn set_height(&mut self, height: u32) {
+        self.height = height;
+        self.cells = (0..height * self.height).map(|_i| Cell::Dead).collect();
+    }
 }
 
 impl fmt::Display for Universe {
@@ -131,5 +147,21 @@ impl fmt::Display for Universe {
         }
 
         Ok(())
+    }
+}
+
+//不使用#[wasm_bindgen]属性来创建另一个impl Universe块，有一些我们想测试需要但不想暴露给JS的函数。
+impl Universe {
+    /// 获取整个宇宙中生存和死亡数
+    pub fn get_cells(&self) -> &[Cell] {
+        &self.cells
+    }
+
+    /// 通过将行和列以数组的形式传递给宇宙中每一个需要设为存活的细胞
+    pub fn set_cells(&mut self, cells: &[(u32, u32)]) {
+        for (row, col) in cells.iter().cloned() {
+            let idx = self.get_index(row, col);
+            self.cells[idx] = Cell::Alive;
+        }
     }
 }
