@@ -101,3 +101,20 @@ playPauseButton.addEventListener("click", event => {
 });
 
 play();
+
+//监听点击事件，将点击事件的页面相对坐标翻译为画布相对坐标，然后转换为行和列，调用toggle_cell方法，最后重绘场景。
+canvas.addEventListener("click",  event => {
+    const boudingRect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / boudingRect.width;
+    const scaleY = canvas.height / boudingRect.height;
+    const canvasLeft = (event.clientX - boudingRect.width) * scaleX;
+    const canvasTop = (event.clientY - boudingRect.height) * scaleY;
+
+    const row = Math.min(Math.floor(canvasTop / (CELL_SIZE + 1)), height - 1);
+    const col = Math.min(Math.floor(canvasLeft / (CELL_SIZE + 1)), width - 1);
+
+    universe.toggle_cell(row, col);
+
+    drawGrid();
+    drawCells();
+});

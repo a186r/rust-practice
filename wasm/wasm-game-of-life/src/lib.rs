@@ -26,7 +26,7 @@ pub enum Cell {
     Alive = 1,
 }
 
-//定义宇宙
+/// 定义宇宙
 #[wasm_bindgen]
 pub struct Universe {
     width: u32,
@@ -34,7 +34,7 @@ pub struct Universe {
     cells: Vec<Cell>,
 }
 
-//公共函数，暴露给javascript
+/// 公共函数，暴露给javascript
 #[wasm_bindgen]
 impl Universe {
     pub fn tick(&mut self) {
@@ -142,6 +142,12 @@ impl Universe {
         self.height = height;
         self.cells = (0..height * self.height).map(|_i| Cell::Dead).collect();
     }
+
+    /// 使细胞变异
+    pub fn toggle_cell(&mut self, row: u32, column: u32) {
+        let idx = self.get_index(row, column);
+        self.cells[idx].toggle();
+    }
 }
 
 impl fmt::Display for Universe {
@@ -170,6 +176,16 @@ impl Universe {
         for (row, col) in cells.iter().cloned() {
             let idx = self.get_index(row, col);
             self.cells[idx] = Cell::Alive;
+        }
+    }
+}
+
+//切换细胞状态
+impl Cell {
+    fn toggle(&mut self) {
+        *self = match *self {
+            Cell::Dead => Cell::Alive,
+            Cell::Alive => Cell::Dead,
         }
     }
 }
