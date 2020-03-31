@@ -1,4 +1,4 @@
-import { Universe, Cell } from "wasm-game-of-life";
+import { Universe, Cell} from "wasm-game-of-life";
 import {memory} from "wasm-game-of-life/wasm_game_of_life_bg"; // 导入WebAssembly memory
 
 const CELL_SIZE = 5;
@@ -46,12 +46,32 @@ const drawCells = () => {
 
     ctx.beginPath();
 
-    for (let row = 0; row < height; row++) {
+    //fillStyle属性为宇宙中的每个细胞在每个动画帧中都设置一次
+    //设置fillStyle是昂贵的，可以为所有的活细胞设置一次，再为所有的死细胞设置一次，一共只需要设置两次fillStyle
+    // for (let row = 0; row < height; row++) {
+    //     for (let col = 0; col < width; col++) {
+    //         const idx = getIndex(row, col);
+    //         ctx.fillStyle = cells[idx] === Cell.Dead
+    //             ?DEAD_COLOR
+    //             :ALIVE_COLOR;
+    //         ctx.fillRect(
+    //             col * (CELL_SIZE + 1) + 1,
+    //             row * (CELL_SIZE + 1) + 1,
+    //             CELL_SIZE,
+    //             CELL_SIZE
+    //         );
+    //     }
+    // }
+
+    //活细胞
+    ctx.fillStyle = ALIVE_COLOR;
+    for(let row = 0; row < height; row++){
         for (let col = 0; col < width; col++) {
             const idx = getIndex(row, col);
-            ctx.fillStyle = cells[idx] === Cell.Dead
-                ?DEAD_COLOR
-                :ALIVE_COLOR;
+            if(cells[idx] !== Cell.Alive) {
+                continue;
+            }
+
             ctx.fillRect(
                 col * (CELL_SIZE + 1) + 1,
                 row * (CELL_SIZE + 1) + 1,
@@ -60,6 +80,25 @@ const drawCells = () => {
             );
         }
     }
+
+    //死细胞
+    ctx.fillStyle = DEAD_COLOR;
+    for(let row = 0; row < height; row++) {
+        for(let col = 0; col < width; col++) {
+            const idx = getIndex(row, col);
+            if (cells[idx] !== Cell.Dead){
+                continue;
+            }
+
+            ctx.fillRect(
+                col * (CELL_SIZE + 1) + 1,
+                row * (CELL_SIZE + 1) + 1,
+                CELL_SIZE,
+                CELL_SIZE
+            );
+        }
+    }
+
     ctx.stroke();
 };
 
@@ -67,6 +106,7 @@ let animationId = null;
 
 const renderLoop = () => {
     fps.render();
+
     universe.tick();
 
     drawGrid();
