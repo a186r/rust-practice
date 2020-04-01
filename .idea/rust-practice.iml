@@ -31,11 +31,16 @@
       <sourceFolder url="file://$MODULE_DIR$/wasm/wasm-game-of-life/examples" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/wasm/wasm-game-of-life/tests" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/wasm/wasm-game-of-life/benches" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/rust-by-example/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/rust-by-example/examples" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/rust-by-example/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/rust-by-example/benches" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/head-first/async-primer/async-example/target" />
       <excludeFolder url="file://$MODULE_DIR$/head-first/async-primer/lazy_static/target" />
       <excludeFolder url="file://$MODULE_DIR$/head-first/async-primer/multi-example/target" />
       <excludeFolder url="file://$MODULE_DIR$/head-first/async-primer/sync-example/target" />
       <excludeFolder url="file://$MODULE_DIR$/myRust/hello/target" />
+      <excludeFolder url="file://$MODULE_DIR$/rust-by-example/target" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
       <excludeFolder url="file://$MODULE_DIR$/wasm/wasm-game-of-life/target" />
     </content>
