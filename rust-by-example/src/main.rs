@@ -1,5 +1,5 @@
-use rust_by_example::chapter1::print_struct;
+use rust_by_example::chapter1::for_display;
 
 fn main() {
-    print_struct();
+    for_display();
 }

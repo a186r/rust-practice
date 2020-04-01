@@ -1,3 +1,6 @@
+use std::fmt;
+use std::fmt::Formatter;
+
 pub fn print() {
     println!("Hello, world!");
     println!("{0}, this is {1}. {1} this is {0}", "Alice", "Bob");
@@ -55,4 +58,87 @@ pub fn print_struct() {
     let peter = Person { name, age };
     //    美化打印
     println!("{:#?}", peter);
+}
+
+//定义一个元祖结构体
+struct Structure1(i32);
+
+impl fmt::Display for Structure1 {
+    //这个trait要求`fmt`使用与下面的函数完全一致的函数签名
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
+        write!(f, "{}", self.0)
+    }
+}
+
+//带有2个数字的结构体
+#[derive(Debug)]
+struct MinMax(i64, i64);
+
+//实现MinMax的Display
+impl fmt::Display for MinMax {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
+        write!(f, "x: {}, y: {}", self.0, self.1)
+    }
+}
+
+//为了比较，定义一个含有具名字段的结构体
+#[derive(Debug)]
+struct Point2D {
+    x: f64,
+    y: f64,
+}
+
+//对Point2D实现Display
+impl fmt::Display for Point2D {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
+        write!(f, "x: {}, y: {}", self.x, self.y)
+    }
+}
+
+impl fmt::Binary for Point2D {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
+        write!(f, "x: {}, y: {}", self.x, self.y)
+    }
+}
+
+#[derive(Debug)]
+struct Complex {
+    real: f64,
+    imag: f64,
+}
+
+impl fmt::Display for Complex {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
+        write!(f, "{} + {}i", self.real, self.imag)
+    }
+}
+
+pub fn for_display() {
+    let minmax = MinMax(0, 12);
+    println!("Compare structures:");
+    println!("Display: {}", minmax);
+    println!("Debug: {:?}", minmax);
+
+    let big_range = MinMax(-300, 300);
+    let small_range = MinMax(-3, 3);
+
+    println!(
+        "The big range is {big} and the small is {small}",
+        small = small_range,
+        big = big_range,
+    );
+
+    let point = Point2D { x: 3.3, y: 7.2 };
+    println!("Compare points:");
+    println!("Display: {}", point);
+    println!("Debug: {:?}", point);
+    println!("What does point2D look like in binary: {:b}?", point);
+
+    let complex = Complex {
+        real: 3.3,
+        imag: 7.2,
+    };
+    println!("Compare points:");
+    println!("Display: {}", complex);
+    println!("Debug: {:?}", complex);
 }
