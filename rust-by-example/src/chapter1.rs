@@ -142,3 +142,56 @@ pub fn for_display() {
     println!("Display: {}", complex);
     println!("Debug: {:?}", complex);
 }
+
+// //有了？ 对于一个Vec实现fmt::Display就很简单了
+// //定义一个包含Vec的结构体List
+// struct List(Vec<i32>);
+//
+// impl fmt::Display for List {
+//     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+//         //    使用元祖的下标获取值，并创建一个vec的引用
+//         let vec = &self.0;
+//         write!(f, "[")?;
+//
+//         //    使用v对vec进行迭代，并用count记录迭代次数
+//         for (count, v) in vec.iter().enumerate() {
+//             if count != 0 {
+//                 write!(f, ",")?;
+//             }
+//             write!(f, "{}:{}", count, v)?;
+//         }
+//
+//         //    加上配对中括号，并返回一个fmt::Result的值
+//         write!(f, "]")
+//     }
+// }
+//
+// pub fn print_list() {
+//     let v = List(vec![1, 2, 3, 4, 5]);
+//     println!("{}", v);
+// }
+
+struct List(Vec<i32>);
+
+impl fmt::Display for List {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        //    首先获取值
+        let vec = &self.0;
+        //创建一个vec
+        write!(f, "[")?;
+        //    迭代并且记录迭代次数
+        for (count, v) in vec.iter().enumerate() {
+            if count != 0 {
+                write!(f, ",")?; // 这一步是打印分隔符
+            }
+            write!(f, "{}:{}", count, v)?; // 这一步是打印  下标:值
+        }
+
+        write!(f, "]")
+    }
+}
+
+pub fn print_list() {
+    let vec = List(vec![1, 2, 3, 4, 5]);
+    println!("{}", vec);
+}
