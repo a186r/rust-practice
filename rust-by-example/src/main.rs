@@ -1,5 +1,5 @@
-use rust_by_example::chapter1::print_list;
+use rust_by_example::chapter1::for_format;
 
 fn main() {
-    print_list();
+    for_format();
 }
