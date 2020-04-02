@@ -1,5 +1,5 @@
-use rust_by_example::chapter2::array;
+use rust_by_example::chapter3::structs;
 
 fn main() {
-    array();
+    structs();
 }
