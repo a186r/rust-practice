@@ -1,5 +1,5 @@
-use std::fmt;
 use std::fmt::{Display, Formatter};
+use std::{fmt, mem};
 
 pub fn compound_type() {
     let _logical: bool = true;
@@ -84,4 +84,34 @@ impl fmt::Display for Matrix {
 
 fn transpose(matrix: Matrix) -> Matrix {
     Matrix(matrix.0, matrix.2, matrix.1, matrix.3)
+}
+
+//此函数借用一个slice
+fn analyze_slice(slice: &[i32]) {
+    println!("第一个元素: {}", slice[0]);
+    println!("slice的长度: {}", slice.len());
+}
+
+pub fn array() {
+    //    定长数组，类型标记是多余的
+    let xs: [i32; 5] = [1, 2, 3, 4, 5];
+
+    //    所有元素可以初始化成相同的值
+    let ys: [i32; 500] = [0; 500];
+
+    println!("第一个参数:{}", xs[0]);
+    println!("第二个参数:{}", xs[1]);
+    //    len返回数组的大小
+    println!("数组大小:{}", xs.len());
+
+    //    数组是在栈中分配的
+    println!("数组占{}bytes", mem::size_of_val(&xs));
+
+    //    数组可以自动被借用为slice
+    println!("借用整个数组作为slice");
+    analyze_slice(&xs);
+
+    //    slice可以指向数组的一部分
+    println!("借用数组的一部分作为一个slice");
+    analyze_slice(&ys[0..4]);
 }
