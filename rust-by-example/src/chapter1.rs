@@ -1,6 +1,5 @@
 use std::fmt;
-use std::fmt::{Display, Error, Formatter};
-use std::intrinsics::write_bytes;
+use std::fmt::{Display, Formatter};
 
 pub fn print() {
     println!("Hello, world!");
