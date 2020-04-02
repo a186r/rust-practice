@@ -1,5 +1,5 @@
-use rust_by_example::chapter1::for_format;
+use rust_by_example::chapter2::literals;
 
 fn main() {
-    for_format();
+    literals();
 }
