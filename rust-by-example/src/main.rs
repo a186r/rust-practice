@@ -1,5 +1,5 @@
-use rust_by_example::chapter2::literals;
+use rust_by_example::chapter2::tuples;
 
 fn main() {
-    literals();
+    tuples();
 }
