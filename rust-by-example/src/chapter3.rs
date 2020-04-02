@@ -11,12 +11,14 @@ struct Nil;
 struct Pair(i32, f32);
 
 //带有两个字段的结构体
+#[derive(Debug)]
 struct Point {
     x: f32,
     y: f32,
 }
 
 //结构体可以作为另一个结构体的字段
+#[derive(Debug)]
 struct Rectangle {
     p1: Point,
     p2: Point,
@@ -53,4 +55,34 @@ pub fn structs() {
     //    解构一个元组结构体
     let Pair(integer, decimal) = pair;
     println!("pair包含:{}, {}", integer, decimal);
+}
+
+pub fn for_test() {
+    let rectangle = Rectangle {
+        p1: Point { x: 0.5, y: 0.5 },
+        p2: Point { x: 0.6, y: 0.9 },
+    };
+    rect_area(rectangle);
+}
+
+fn rect_area(rectangle: Rectangle) -> f32 {
+    let Rectangle { p1, p2 } = rectangle;
+    let area = (p2.y - p1.y).abs() * (p2.x - p1.x).abs();
+    println!("长方形的面积为:{}", area);
+    area
+}
+
+pub fn for_square() {
+    let square = square(Point { x: 1.0, y: 2.0 }, 3.0);
+    println!("新构建的长方形是: {:?}", square);
+
+    println!("新长方形的面积是:{:?}", rect_area(square));
+}
+
+fn square(point: Point, len: f32) -> Rectangle {
+    let Point { x, y } = point;
+    Rectangle {
+        p1: Point { x, y: y + len },
+        p2: Point { x: x + len, y },
+    }
 }
