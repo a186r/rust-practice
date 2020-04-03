@@ -1,5 +1,5 @@
-use rust_by_example::chapter7::expression;
+use rust_by_example::chapter8::for_in;
 
 fn main() {
-    expression();
+    for_in();
 }
