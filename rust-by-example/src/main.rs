@@ -1,5 +1,5 @@
-use rust_by_example::chapter3::for_const;
+use rust_by_example::chapter4::variable_bindings;
 
 fn main() {
-    for_const();
+    variable_bindings();
 }
