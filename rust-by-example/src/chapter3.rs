@@ -1,3 +1,6 @@
+//该属性用于隐藏对未使用代码的警告
+#![allow(dead_code)]
+
 #[derive(Debug)]
 struct Person<'a> {
     name: &'a str,
@@ -73,10 +76,9 @@ fn rect_area(rectangle: Rectangle) -> f32 {
 }
 
 pub fn for_square() {
-    let square = square(Point { x: 1.0, y: 2.0 }, 3.0);
-    println!("新构建的长方形是: {:?}", square);
-
-    println!("新长方形的面积是:{:?}", rect_area(square));
+    let new_square = square(Point { x: 1.0, y: 2.0 }, 3.0);
+    println!("新构建的长方形是: {:?}", new_square);
+    println!("新长方形的面积是:{:?}", rect_area(new_square));
 }
 
 fn square(point: Point, len: f32) -> Rectangle {
@@ -84,5 +86,66 @@ fn square(point: Point, len: f32) -> Rectangle {
     Rectangle {
         p1: Point { x, y: y + len },
         p2: Point { x: x + len, y },
+    }
+}
+
+enum WebEvent {
+    //一个enum可以是单元结构体
+    PageLoad,
+    PageUnload,
+    //    或者一个元组结构体
+    KeyPress(char),
+    Paste(String),
+    //    或者一个普通的结构体
+    Click { x: i64, y: i64 },
+}
+
+fn inspect(event: WebEvent) {
+    match event {
+        WebEvent::PageLoad => println!("page loaded"),
+        WebEvent::PageUnload => println!("page unloaded"),
+        //从enum里解构出c
+        WebEvent::KeyPress(c) => println!("pressed '{}'", c),
+        WebEvent::Paste(s) => println!("pasted \"{}\".", s),
+        WebEvent::Click { x, y } => {
+            println!("clicked at x={}, y={}.", x, y);
+        }
+    }
+}
+
+pub fn for_inspect() {
+    let pressed = WebEvent::KeyPress('x');
+    //to_owned从一个字符串切片中创建一个具有所有权的string
+    let pasted = WebEvent::Paste("my text".to_owned());
+    let click = WebEvent::Click { x: 23, y: 66 };
+    let load = WebEvent::PageLoad;
+    let unload = WebEvent::PageUnload;
+
+    inspect(pressed);
+    inspect(pasted);
+    inspect(click);
+    inspect(load);
+    inspect(unload);
+}
+
+enum VeryVerboseEnumOfThingsToDoWithNumbers {
+    Add,
+    Subtract,
+}
+
+//创建一个类型别名
+type Operations = VeryVerboseEnumOfThingsToDoWithNumbers;
+
+pub fn for_type_alias() {
+    let x = Operations::Add;
+}
+
+//最常见的情况就是在impl块中使用self别名
+impl VeryVerboseEnumOfThingsToDoWithNumbers {
+    fn run(&self, x: i32, y: i32) -> i32 {
+        match self {
+            Self::Add => x + y,
+            Self::Subtract => x - y,
+        }
     }
 }

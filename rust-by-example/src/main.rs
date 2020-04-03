@@ -1,5 +1,5 @@
-use rust_by_example::chapter3::for_square;
+use rust_by_example::chapter3::for_inspect;
 
 fn main() {
-    for_square();
+    for_inspect();
 }
