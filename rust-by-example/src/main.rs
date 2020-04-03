@@ -1,5 +1,5 @@
-use rust_by_example::chapter6::for_parse;
+use rust_by_example::chapter7::expression;
 
 fn main() {
-    for_parse();
+    expression();
 }
