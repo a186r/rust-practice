@@ -149,3 +149,32 @@ impl VeryVerboseEnumOfThingsToDoWithNumbers {
         }
     }
 }
+
+enum Status {
+    Rich,
+    Poor,
+}
+
+enum Work {
+    Civilian,
+    Soldier,
+}
+
+fn for_use() {
+    use Status::{Poor, Rich};
+    use Work::*;
+
+    let status = Poor;
+    let work = Soldier;
+
+    match status {
+        //没有使用完整路径，是因为上面显式的用了use
+        Rich => println!("rich"),
+        Poor => println!("poor"),
+    }
+
+    match work {
+        Civilian => println!("civilian"),
+        Soldier => println!("soldier"),
+    }
+}
