@@ -139,7 +139,7 @@ enum VeryVerboseEnumOfThingsToDoWithNumbers {
 type Operations = VeryVerboseEnumOfThingsToDoWithNumbers;
 
 pub fn for_type_alias() {
-    let x = Operations::Add;
+    let _x = Operations::Add;
 }
 
 //最常见的情况就是在impl块中使用self别名

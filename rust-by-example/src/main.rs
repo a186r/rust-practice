@@ -1,5 +1,5 @@
-use rust_by_example::chapter4::declare_variable;
+use rust_by_example::chapter6::for_parse;
 
 fn main() {
-    declare_variable();
+    for_parse();
 }

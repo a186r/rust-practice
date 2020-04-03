@@ -1,4 +1,4 @@
-use std::fmt::{Display, Formatter};
+use std::fmt::Formatter;
 use std::{fmt, mem};
 
 pub fn compound_type() {
@@ -12,12 +12,12 @@ pub fn compound_type() {
     let _default_integer = 7;
 
     //    自动推断类型
-    let mut inferred_type = 12;
-    inferred_type = 234234242i64;
+    let mut _inferred_type = 12;
+    _inferred_type = 234234242i64;
 
     //    变量的值可以改变
-    let mut mutable = 12;
-    mutable = 13;
+    let mut _mutable = 12;
+    _mutable = 13;
 
     //    变量的类型不能改变
     // mutable = true;
