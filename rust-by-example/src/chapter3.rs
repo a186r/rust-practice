@@ -258,3 +258,19 @@ pub fn create_linklist() {
     println!("linked list has length: {}", list.len());
     println!("{}", list.stringify());
 }
+
+//全局变量是在在所有其他作用域之外声明的
+static LANGUAGE: &'static str = "Rust";
+const THRESHOLD: i32 = 10;
+
+fn is_big(n: i32) -> bool {
+    n > THRESHOLD
+}
+
+pub fn for_const() {
+    let n = 16;
+    //    访问常量
+    println!("this is {}", LANGUAGE);
+    println!("the threshold is {}", THRESHOLD);
+    println!("{} is {}", n, if is_big(n) { "big" } else { "small" });
+}

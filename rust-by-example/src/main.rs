@@ -1,5 +1,5 @@
-use rust_by_example::chapter3::create_linklist;
+use rust_by_example::chapter3::for_const;
 
 fn main() {
-    create_linklist();
+    for_const();
 }
