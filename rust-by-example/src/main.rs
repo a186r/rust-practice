@@ -1,5 +1,5 @@
-use rust_by_example::chapter3::for_inspect;
+use rust_by_example::chapter3::create_linklist;
 
 fn main() {
-    for_inspect();
+    create_linklist();
 }

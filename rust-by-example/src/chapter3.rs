@@ -1,6 +1,8 @@
 //该属性用于隐藏对未使用代码的警告
 #![allow(dead_code)]
 
+use List::*;
+
 #[derive(Debug)]
 struct Person<'a> {
     name: &'a str,
@@ -8,7 +10,7 @@ struct Person<'a> {
 }
 
 //单元结构体
-struct Nil;
+// struct Nil;
 
 //元组结构体（具名元组）
 struct Pair(i32, f32);
@@ -48,7 +50,7 @@ pub fn structs() {
         p2: point,
     };
     //    实例化一个单元结构体
-    let _nil = Nil;
+    // let _nil = Nil;
 
     //    实例化一个元组结构体
     let pair = Pair(1, 0.1);
@@ -177,4 +179,82 @@ fn for_use() {
         Civilian => println!("civilian"),
         Soldier => println!("soldier"),
     }
+}
+
+//拥有隐式辨别值的enum
+enum Number {
+    Zero,
+    One,
+    Two,
+}
+
+//拥有显式辨别值的enum
+enum Color {
+    Red = 0xff0000,
+    Green = 0x00ff00,
+    Blue = 0x0000ff,
+}
+
+pub fn for_c() {
+    println!("zero is {}", Number::Zero as i32);
+    println!("one is {}", Number::One as i32);
+
+    println!("r are #{:06X}", Color::Red as i32);
+    println!("v are #{:06X}", Color::Blue as i32);
+}
+
+//enum的一个常见用法就是创建链表(linked-list)
+enum List {
+    //Cons 元组结构体，包含链表的一个元素和一个指向下一个节点的指针
+    Cons(u32, Box<List>),
+    //末节点，表明链表结束
+    Nil,
+}
+
+//可以为enum定义方法
+impl List {
+    //    创建一个空的List实例
+    fn new() -> List {
+        Nil
+    }
+
+    //    处理一个List，在其头部插入新元素，并返回该List
+    fn prepend(self, elem: u32) -> List {
+        //    Cons同样为List类型
+        Cons(elem, Box::new(self))
+    }
+
+    fn len(&self) -> u32 {
+        //    必须对self进行匹配，因为这个方法的行为取决于self的取值种类
+        match *self {
+            //    不能得到tail的所有权，因为self是借用的，因此使用一个对tail的借用
+            Cons(_, ref tail) => 1 + tail.len(),
+            Nil => 0,
+        }
+    }
+
+    //    返回列表的字符串表示(该字符串是堆分配的)
+    fn stringify(&self) -> String {
+        match *self {
+            Cons(head, ref tail) => {
+                //    format和print类似，但是返回的是一个堆分配的字符串，而不是打印结果到控制台上
+                format!("{}, {}", head, tail.stringify())
+            }
+            Nil => format!("Nil"),
+        }
+    }
+}
+
+pub fn create_linklist() {
+    //    创建一个空链表
+    let mut list = List::new();
+    //    追加一些元素
+    list = list.prepend(1);
+    list = list.prepend(2);
+    list = list.prepend(3);
+    list = list.prepend(4);
+
+    //    显示链表的最后状态
+    println!("linked list has length: {}", list.len());
+    println!("{}", list.stringify());
 }
