@@ -1,5 +1,5 @@
-use rust_by_example::chapter4::variable_bindings;
+use rust_by_example::chapter4::declare_variable;
 
 fn main() {
-    variable_bindings();
+    declare_variable();
 }
