@@ -226,3 +226,37 @@ pub fn for_refre() {
         }
     }
 }
+
+pub fn for_struct() {
+    struct Foo {
+        x: (u32, u32),
+        y: u32,
+    }
+
+    //    解构结构体的成员
+    let foo = Foo { x: (1, 2), y: 14 };
+    let Foo { x: (a, b), y } = foo;
+    println!("a = {}, b = {}, y = {}", a, b, y);
+
+    //    可以解构结构i并重命名变量, 成员顺序并不重要
+    let Foo { y: i, x: j } = foo;
+    println!("i = {:?}, j:{:?}", i, j);
+    //    也可以忽略某些变量
+    let Foo { y, .. } = foo;
+    println!("y = {}", y);
+}
+
+// 守卫
+//match可以加上守卫来过滤分支
+pub fn for_guard() {
+    let pair = (-2, 2);
+
+    println!("Tell me about {:?}", pair);
+    match pair {
+        (x, y) if x == y => println!("These are twins"),
+        //    if条件部分是一个守卫
+        (x, y) if x + y == 0 => println!("Antimatter, kaboom!"),
+        (x, _) if x % 2 == 0 => println!("The first one is odd"),
+        _ => println!("No correlation..."),
+    }
+}
