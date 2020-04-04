@@ -1,4 +1,5 @@
 #![allow(unreachable_code)]
+#[allow(dead_code)]
 fn fi_else() {
     let n = 5;
     if n < 0 {
@@ -134,4 +135,94 @@ pub fn for_match() {
     };
 
     println!("{} -> {}", boolean, binary);
+}
+
+//元组可以在match中解构
+pub fn for_destruct() {
+    let pair = (0, -2);
+    println!("Tell me about {:?}", pair);
+
+    match pair {
+        //    解构出第二个值
+        (0, y) => println!("y: {}", y),
+        (x, 0) => println!("x: {}", x),
+        _ => println!("不匹配"),
+    }
+}
+
+//解构枚举
+enum Color {
+    //这三个值仅由他们的名字来指定
+    Red,
+    Blue,
+    Green,
+    //这些则把u32元组赋予不同名字，以色彩模型命名
+    RGB(u32, u32, u32),
+    HSV(u32, u32, u32),
+    HSL(u32, u32, u32),
+    CMY(u32, u32, u32),
+    CMYK(u32, u32, u32, u32),
+}
+
+pub fn for_enum() {
+    let color = Color::HSL(122, 17, 40);
+
+    println!("What color is it");
+
+    match color {
+        Color::Red => println!("red"),
+        Color::Blue => println!("blue"),
+        Color::Green => println!("green"),
+        Color::RGB(r, g, b) => println!("r:{}, g:{}, b:{}", r, g, b),
+        Color::HSV(h, s, v) => println!("h:{}, s:{}, v:{}", h, s, v),
+        Color::HSL(h, s, l) => println!("h:{}, s:{}, l:{}", h, s, l),
+        Color::CMY(c, m, y) => println!("c:{}, m:{}, y:{}", c, m, y),
+        Color::CMYK(c, m, y, k) => println!("c:{}, m:{}, y:{}, k:{}", c, m, y, k),
+        //    不需要其他分支，因为所有的情形都已被覆盖
+    }
+}
+
+//解引用使用*
+//解构使用&、ref、和ref mut
+pub fn for_refre() {
+    let reference = &4;
+
+    match reference {
+        &vcl => println!("Got a value via destructuring: {:?}", vcl),
+        //下面会报错，因为不能对整数解引用
+        // &vcl => println!("Got a value via destructuring: {:?}", *vcl),
+    }
+
+    //    如果不想用&，需要在匹配前解引用
+    match *reference {
+        val => println!("Got a value via dereferencing: {:?}", val),
+    }
+
+    //下面这个不是引用，因为右边不是引用
+    let _not_a_reference = 3;
+
+    //    rust提供了ref，它更改了赋值行为，从而可以对具体值创建引用
+    //    下面这行将得到一个引用
+    let ref _is_a_reference = 3;
+
+    //    相应的，定义两个非引用的变量，通过ref和ref mut仍可以取其引用
+    let value = 5;
+    let mut mut_value = 6;
+
+    match value {
+        // ref r => println!("Got a reference to a value: {:?}", r),
+        ref r => println!("Got a reference to a value: {:?}", *r),
+    }
+
+    match mut_value {
+        ref mut r => println!("Got a reference to a value: {:?}", *r),
+    }
+
+    match mut_value {
+        ref mut m => {
+            //    已经获得了mut_value的引用，先要解引用，才能改变它的值
+            *m += 10;
+            println!("We added 10. mut_value is : {:?}", m);
+        }
+    }
 }
