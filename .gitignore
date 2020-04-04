@@ -10,3 +10,9 @@ Cargo.lock
 **/*.rs.bk
 
 node_modules
+
+#忽略rust编译目录
+**/target
+
+/node_modules/
+
