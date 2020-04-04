@@ -260,3 +260,38 @@ pub fn for_guard() {
         _ => println!("No correlation..."),
     }
 }
+
+//绑定
+//在match中，若间接的访问一个变量，则不经过重新绑定就无法在分支中使用它，match提供了@符号来绑定到变量名称
+fn age() -> u32 {
+    22
+}
+
+pub fn for_bind() {
+    println!("Tell me type of person you are");
+
+    match age() {
+        0 => println!("I'm not born yet I guess"),
+        n @ 1...12 => println!("child of age:{:?}", n),
+        n @ 13...19 => println!("teen of age:{:?}", n),
+        //    不符合上面的范围，返回结果
+        a => println!("{:?}", a),
+        //也可以写成这样
+        // a @ _ => println!("{:?}", a),
+    }
+}
+
+//也可以使用绑定来解构enum变体，例如Option
+fn some_number() -> Option<u32> {
+    // Some(55)
+    None
+}
+
+pub fn for_option() {
+    match some_number() {
+        Some(n @ 42) => println!("The answer: {}!", n),
+        Some(n) => println!("Not interesting ...{}", n),
+        //None的情况
+        _ => (),
+    }
+}
