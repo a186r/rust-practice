@@ -112,3 +112,26 @@ pub fn for_in() {
     }
     println!("names: {:?}", names);
 }
+
+pub fn for_match() {
+    let number = 13;
+
+    println!("Tell me about {}", number);
+
+    match number {
+        1 => println!("one"),
+        2 | 3 | 5 | 7 => println!("This is a prime!"),
+        //匹配一个区间范围
+        13..=19 => println!("A teen"),
+        _ => println!("Ain't special"),
+    }
+
+    let boolean = true;
+    //    match也是一个表达式
+    let binary = match boolean {
+        false => 0,
+        true => 1,
+    };
+
+    println!("{} -> {}", boolean, binary);
+}

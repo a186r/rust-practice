@@ -1,5 +1,5 @@
-use rust_by_example::chapter8::for_in;
+use rust_by_example::chapter8::for_match;
 
 fn main() {
-    for_in();
+    for_match();
 }
