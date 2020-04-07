@@ -115,3 +115,25 @@ pub fn methods() {
     // 报错，前面的destory已经消耗了pair
     // pair.destory();
 }
+
+pub fn closures() {
+    //    通过闭包和函数分别实现自增
+    fn function(i: i32) -> i32 {
+        i + 1
+    }
+
+    // 闭包是匿名的
+    let colsure_annotated = |i: i32| -> i32 { i + 1 };
+    let colsure_inferred = |i| i + 1;
+
+    let i = 1;
+
+    //    调用函数和闭包
+    println!("function: {}", function(i));
+    println!("1:{}", colsure_annotated(i));
+    println!("2:{}", colsure_inferred(i));
+
+    //    没有参数的闭包，返回一个i32类型
+    let one = || 1;
+    println!("3:{}", one());
+}
