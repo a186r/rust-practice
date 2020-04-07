@@ -1,5 +1,5 @@
-use rust_by_example::chapter8::much_beautiful;
+use rust_by_example::chapter9::methods;
 
 fn main() {
-    much_beautiful();
+    methods();
 }
