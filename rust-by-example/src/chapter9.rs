@@ -137,3 +137,50 @@ pub fn closures() {
     let one = || 1;
     println!("3:{}", one());
 }
+
+pub fn capture() {
+    use std::mem;
+    let color = "green";
+    //这个闭包会立即借用color，并将该借用和闭包本身存储到print变量中，color会一直保持被借用的状态知道print离开作用域
+    let print = || println!("'color':{}", color);
+    //调用闭包，闭包又借用color
+    print();
+    print();
+
+    let mut count = 0;
+
+    let mut inc = || {
+        count += 1;
+        println!("count: {}", count);
+    };
+    inc();
+    inc();
+
+    let reborrow = &mut count;
+    println!("l:{}", reborrow);
+
+    let movable = Box::new(3);
+    // mem::drop要求T类型本身，所以闭包将会捕获变量的值，，在这种情况下，可复制类型将会复制给闭包，
+    // 不可复制类型必须移动到闭包中
+    // 因而，movable变量在这里立即移动到了闭包中
+    let consume = || {
+        println!("movable: {:?}", movable);
+        mem::drop(movable);
+    };
+    // consume消耗了该变量，所以该闭包只能调用一次
+    consume();
+    // consume();
+}
+
+//在｜之前使用move会强制闭包取得被捕获变量的所有权
+pub fn l_move() {
+    let haystack = vec![1, 2, 3];
+
+    let contains = move |needle| haystack.contains(needle);
+
+    println!("{}", contains(&1));
+    println!("{}", contains(&4));
+
+    // 借用检查不允许在变量被移动走之后继续使用它
+    // println!("{} elements in vec", haystack.len());
+}

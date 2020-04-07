@@ -1,5 +1,5 @@
-use rust_by_example::chapter9::closures;
+use rust_by_example::chapter9::l_move;
 
 fn main() {
-    closures();
+    l_move();
 }
