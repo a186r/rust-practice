@@ -1,5 +1,5 @@
-use rust_by_example::chapter8::fix_enum;
+use rust_by_example::chapter8::much_beautiful;
 
 fn main() {
-    fix_enum();
+    much_beautiful();
 }

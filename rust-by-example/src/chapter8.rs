@@ -384,3 +384,41 @@ pub fn fix_enum() {
         println!("a is not foobar");
     }
 }
+
+//和if let 类似，while let也可以把别扭的match改写得好看一些
+pub fn while_let() {
+    let mut optional = Some(0);
+    //重复运行这个测试
+    loop {
+        match optional {
+            Some(i) => {
+                if i > 9 {
+                    println!("Greater than 9, quit!");
+                    optional = None;
+                } else {
+                    println!("i is {:?}, Try again.", i);
+                    optional = Some(i + 1);
+                }
+            }
+            _ => {
+                break;
+            }
+        }
+    }
+}
+
+//使用while let可以使得代码更优雅
+//当let将optional解构成Some(i)时，就执行语句块{},否则就break
+pub fn much_beautiful() {
+    let mut optional = Some(0);
+
+    while let Some(i) = optional {
+        if i > 9 {
+            println!("大于9");
+            optional = None;
+        } else {
+            println!("i is {:?}, Try again. ", i);
+            optional = Some(i + 1);
+        }
+    }
+}
