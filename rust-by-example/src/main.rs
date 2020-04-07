@@ -1,5 +1,5 @@
-use rust_by_example::chapter8::for_option;
+use rust_by_example::chapter8::fix_enum;
 
 fn main() {
-    for_option();
+    fix_enum();
 }

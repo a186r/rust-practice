@@ -295,3 +295,92 @@ pub fn for_option() {
         _ => (),
     }
 }
+
+//在某些环境下，用match匹配枚举类型并不优雅，例如
+fn feel_not_good() {
+    let optional = Some(7);
+
+    match optional {
+        Some(i) => println!("this is a really long string an '{:?}'", i),
+        _ => {}
+    }
+}
+
+//使用if let在这样的场合要简洁的多，并且允许指明多种失败情况下的选项
+pub fn feel_good() {
+    //    全部都是Option<i32>类型
+    let number = Some(7);
+    let letter: Option<i32> = None;
+    let emoticon: Option<i32> = None;
+
+    //若let将number解构成Some(i)，则执行语句块{}
+    if let Some(i) = number {
+        println!("Matched {:?}", i);
+    }
+
+    //    如果要指明失败的类型，就使用else
+    if let Some(i) = letter {
+        println!("Matched {:?}", i);
+    } else {
+        //解构失败
+        println!("Err");
+    }
+
+    //    提供另一种失败情况下的条件
+    let i_like_letters = false;
+
+    if let Some(i) = emoticon {
+        println!("Matched: {:?}", i);
+    } else if i_like_letters {
+        println!("没有匹配到一个数字哦");
+    } else {
+        //条件的值为false，于是以下是默认的分支
+        println!("我不喜欢letters，来到emoticon吧");
+    }
+}
+
+//使用if let 匹配任何枚举值
+#[derive(Debug)]
+enum Foo {
+    Bar,
+    Baz,
+    Qux(u32),
+}
+
+pub fn if_let_match_enum() {
+    let a = Foo::Bar;
+    let b = Foo::Baz;
+    let c = Foo::Qux(12);
+
+    if let Foo::Bar = a {
+        println!("a is foobar");
+    }
+
+    if let Foo::Baz = b {
+        println!("b is foobaz");
+    }
+
+    if let Foo::Qux(i) = c {
+        println!("c is : {}", i);
+    }
+}
+
+//枚举未注明#[derive(PartialEq)]，通常情况下if Foo2::Bar == a会出错，因为此类枚举的实例不具有可比性
+//但是if let是可行的
+enum Foo2 {
+    Bar,
+}
+
+pub fn fix_enum() {
+    let a = Foo2::Bar;
+
+    //    变量匹配Foo2::Bar
+    // if Foo2::Bar == a {
+    //     println!("a is foobar")
+    // }
+    if let Foo2::Bar = a {
+        println!("a is foobar");
+    } else {
+        println!("a is not foobar");
+    }
+}
