@@ -184,3 +184,48 @@ pub fn l_move() {
     // 借用检查不允许在变量被移动走之后继续使用它
     // println!("{} elements in vec", haystack.len());
 }
+
+//该函数将闭包作为参数并调用它
+fn apply<F>(f: F)
+where
+    //闭包没有输入值和返回值
+    F: FnOnce(),
+{
+    f();
+}
+
+//输入闭包，返回一个i32整型的函数
+fn apply_to_3<F>(f: F) -> i32
+where
+    //闭包处理一个i32整型并返回一个i32整型
+    F: Fn(i32) -> i32,
+{
+    f(3)
+}
+
+pub fn input_para() {
+    use std::mem;
+    let greeting = "hello";
+
+    //    to_owned从借用的数据创建有所有权的数据
+    let mut farewell = "goodbye".to_owned();
+    //    捕获2个变量。通过引用捕获"greeting，通过值捕获farewell
+    let diary = || {
+        println!("I said {}", greeting);
+
+        //    下文改变了farewell，因此要求闭包通过可变引用来捕获它
+        farewell.push_str("!!!");
+        println!("Then I screamed {}.", farewell);
+        println!("Now I can sleep. zzzzz");
+
+        //    手动调用drop又要求闭包通过值获取farewell
+        mem::drop(farewell);
+    };
+
+    //    以闭包作为参数
+    apply(diary);
+
+    //    闭包double满足apply_to_3的trait约束
+    let double = |x| 2 * x;
+    println!("3 doubled: {}", apply_to_3(double));
+}

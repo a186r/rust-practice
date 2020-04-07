@@ -1,5 +1,5 @@
-use rust_by_example::chapter9::l_move;
+use rust_by_example::chapter9::input_para;
 
 fn main() {
-    l_move();
+    input_para();
 }
