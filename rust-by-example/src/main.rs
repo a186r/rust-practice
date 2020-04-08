@@ -1,5 +1,5 @@
-use rust_by_example::chapter9::input_para;
+use rust_by_example::chapter9::for_fn;
 
 fn main() {
-    input_para();
+    for_fn();
 }

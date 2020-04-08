@@ -229,3 +229,37 @@ pub fn input_para() {
     let double = |x| 2 * x;
     println!("3 doubled: {}", apply_to_3(double));
 }
+
+fn apply2<F>(f: F)
+where
+    F: Fn(),
+{
+    f();
+}
+
+fn for_apply2() {
+    let x = 7;
+
+    //捕获x到匿名类型中，并为它实现Fn
+    //将闭包存储到print中
+    let print = || println!("{}", x);
+    apply2(print);
+}
+
+//定义一个函数，可以接受一个由Fn限定的范型F参数并调用它
+fn call_me<F: Fn()>(f: F) {
+    f()
+}
+
+//定义一个满足Fn约束的封装函数
+fn function() {
+    println!("I'm a function");
+}
+
+pub fn for_fn() {
+    //    定义一个满足Fn约束的闭包
+    let closure = || println!("I'm a closure!");
+
+    call_me(closure);
+    call_me(function);
+}
