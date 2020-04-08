@@ -48,6 +48,7 @@ pub fn for_nested() {
             println!("entered the inner loop");
 
             break 'outer;
+            break 'inner;
         }
         println!("this point will never be reached");
     }
@@ -272,8 +273,8 @@ pub fn for_bind() {
 
     match age() {
         0 => println!("I'm not born yet I guess"),
-        n @ 1...12 => println!("child of age:{:?}", n),
-        n @ 13...19 => println!("teen of age:{:?}", n),
+        n @ 1..=12 => println!("child of age:{:?}", n),
+        n @ 13..=19 => println!("teen of age:{:?}", n),
         //    不符合上面的范围，返回结果
         a => println!("{:?}", a),
         //也可以写成这样

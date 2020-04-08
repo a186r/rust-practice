@@ -1,5 +1,5 @@
-use rust_by_example::chapter10::for_use;
+use rust_by_example::chapter11::for_crate;
 
 fn main() {
-    for_use();
+    for_crate();
 }
