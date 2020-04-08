@@ -1,5 +1,5 @@
-use rust_by_example::chapter9::for_fn;
+use rust_by_example::chapter9::for_iter;
 
 fn main() {
-    for_fn();
+    for_iter();
 }

@@ -263,3 +263,53 @@ pub fn for_fn() {
     call_me(closure);
     call_me(function);
 }
+
+//按照定义，匿名的闭包的类型是未知的，所以只有使用impl Trait才能返回一个闭包
+fn create_fn() -> impl Fn() {
+    let text = "Fn".to_owned();
+    // 必须使用move关键字，表明所有的捕获都是通过值进行的，这是必须的，
+    // 因为在函数退出时，任何通过引用的捕获都被丢弃，在闭包中留下无效的引用
+    move || println!("This is a: {}", text)
+}
+
+fn create_fnmut() -> impl FnMut() {
+    let text = "FnMut".to_owned();
+    move || println!("This is a: {}", text)
+}
+
+pub fn for_fnm() {
+    let fn_plain = create_fn();
+    let mut fn_mut = create_fnmut();
+
+    let fn_mut2 = || println!("自己写的闭包:{}", "自己".to_owned());
+
+    fn_plain();
+    fn_mut();
+    fn_mut2();
+}
+
+//标准库中使用闭包的例子
+//Iterator::any
+// pub trait Iterator2 {
+//     //    被迭代的类型
+//     type Item;
+//
+//     fn any<F> (&mut self, f: F) -> bool
+//     where
+//     F: FnMut(Self::Item) -> bool{}
+// }
+
+pub fn for_iter() {
+    let vec1 = vec![1, 2, 3];
+    let vec2 = vec![4, 5, 6];
+    println!("2 in vec1: {}", vec1.iter().any(|&x| x == 2));
+    //对vec的into_iter()举出i32,无需解构
+    println!("2 in vec2: {}", vec2.into_iter().any(|x| x == 2));
+
+    let array1 = [1, 2, 3];
+    let array2 = [4, 5, 6];
+    //    对数组的iter举出&i32
+    println!("2 in array1: {}", array1.iter().any(|&x| x == 2));
+    //对数组的into_iter()通常举出&i32，需要解构
+    println!("2 in array1: {}", array2.into_iter().any(|&x| x == 2));
+}
