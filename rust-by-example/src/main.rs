@@ -1,5 +1,5 @@
-use rust_by_example::chapter9::for_diverging;
+use rust_by_example::chapter10::for_use;
 
 fn main() {
-    for_diverging();
+    for_use();
 }
