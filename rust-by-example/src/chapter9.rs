@@ -340,3 +340,63 @@ pub fn for_find() {
     println!("Find 2 in array1: {:?}", array1.iter().find(|&&x| x == 2));
     println!("Find 2 in array2: {:?}", array2.iter().find(|&&x| x == 2));
 }
+
+//Rust使用了高阶函数，HOF和惰性迭代器给RUst带来了函数式编程的风格
+fn is_odd(n: u32) -> bool {
+    n % 2 == 1
+}
+
+pub fn for_hof() {
+    println!("Find the sum of all xxxx 1000");
+
+    let upper = 1000;
+    //    命令式的写法
+    let mut acc = 0;
+    for n in 0.. {
+        let n_squared = n * n;
+
+        if n_squared >= upper {
+            break;
+        } else if is_odd(n_squared) {
+            acc += n_squared
+        }
+    }
+    println!("imperative style: {}", acc);
+
+    //    函数式的写法
+    let sum_of_squared_odd_numbers: u32 = (0..)
+        .map(|n| n * n)
+        .take_while(|&n| n < upper)
+        .filter(|&n| is_odd(n))
+        .fold(0, |sum, i| sum + i);
+    println!("imperative style: {}", sum_of_squared_odd_numbers);
+}
+
+//发散函数绝不会返回
+fn foo() -> ! {
+    panic!("sdfasdf");
+}
+
+fn some_fn() {
+    ()
+}
+
+// #[feature(never_type)]
+pub fn for_diverging() {
+    // let a: () = some_fn();
+    // println!("这个方法会返回，你会看到这行输出");
+    // let x: ! = panic!("这个调用不会返回");
+    // println!("你看不到这行输出");
+
+    fn sun_odd_numbers(up_to: u32) -> u32 {
+        let mut acc = 0;
+        for i in 0.. {
+            let addition: u32 = match i % 2 == 1 {
+                true => i,
+                false => continue,
+            };
+            acc += addition;
+        }
+        acc
+    }
+}

@@ -1,5 +1,5 @@
-use rust_by_example::chapter9::for_find;
+use rust_by_example::chapter9::for_diverging;
 
 fn main() {
-    for_find();
+    for_diverging();
 }
