@@ -313,3 +313,30 @@ pub fn for_iter() {
     //对数组的into_iter()通常举出&i32，需要解构
     println!("2 in array1: {}", array2.into_iter().any(|&x| x == 2));
 }
+
+// pub trait Iterator2 {
+//     type Item;
+//
+//     fn find<P>(&mut self, predicate: P) -> Option<Self::Item>
+//     where
+//         P: FnMut(&Self::Item) -> bool,
+//     {
+//     }
+// }
+
+pub fn for_find() {
+    let vec1 = vec![1, 2, 3];
+    let vec2 = vec![4, 5, 6];
+
+    let mut iter = vec1.iter();
+    let mut into_iter = vec2.into_iter();
+
+    //Find方法会把迭代器元素的引用传给闭包，迭代器元素自身是&i32类型，所以传给闭包的是&&i32类型
+    println!("Find 2 in vec1: {:?}", iter.find(|&&x| x == 2));
+    println!("Find 2 in vec2: {:?}", into_iter.find(|&x| x == 2));
+
+    let array1 = [1, 2, 3];
+    let array2 = [4, 5, 6];
+    println!("Find 2 in array1: {:?}", array1.iter().find(|&&x| x == 2));
+    println!("Find 2 in array2: {:?}", array2.iter().find(|&&x| x == 2));
+}

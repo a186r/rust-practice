@@ -1,5 +1,5 @@
-use rust_by_example::chapter9::for_iter;
+use rust_by_example::chapter9::for_find;
 
 fn main() {
-    for_iter();
+    for_find();
 }
