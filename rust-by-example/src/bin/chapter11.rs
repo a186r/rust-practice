@@ -1,4 +1,4 @@
-use crate::rary;
+use crate::bin::rary;
 
 pub fn for_crate() {
     rary::public_function();

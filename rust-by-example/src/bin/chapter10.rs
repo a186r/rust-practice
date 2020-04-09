@@ -23,7 +23,7 @@ mod my_mod {
             println!("called my_mod::nested::private_function()");
         }
 
-        pub(in crate::chapter10::my_mod) fn public_function_in_my_mod() {
+        pub(in crate::bin::chapter10::my_mod) fn public_function_in_my_mod() {
             println!("called my_mod::nested::public_function_in_my_mod");
             public_function_in_nested();
         }
@@ -116,7 +116,7 @@ pub fn for_pub_stru() {
 }
 
 //use声明可以将一个完整的路径绑定到一个新的名字，从而更容易访问
-use crate::chapter10::deeply::nested::function2 as other_function;
+use crate::bin::chapter10::deeply::nested::function2 as other_function;
 
 fn function2() {
     println!("called function2()");

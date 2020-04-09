@@ -1,5 +1,5 @@
-use rust_by_example::chapter11::for_crate;
+use rust_by_example::bin::chapter13::for_cfg;
 
 fn main() {
-    for_crate();
+    for_cfg();
 }

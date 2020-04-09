@@ -8,6 +8,6 @@ edition = "2018"
 
 [dependencies]
 
-[package]
+#[package]
 #构建脚本
 #build = "build.rs"
