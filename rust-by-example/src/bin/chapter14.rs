@@ -162,3 +162,113 @@ pub fn for_bounds() {
     print_debug(&rectangle);
     println!("Area: {}", area(&rectangle));
 }
+
+//某些情况下也可以使用where分句来形成约束，这拥有更好的表现力
+
+//约束的工作机制会产生这样的效果：即使一个trait不包含任何功能，你仍然可以使用它作为约束，标准库重的Eq和Ord就是这样的trait
+struct Cardinal;
+struct BlueJay;
+struct Turkey;
+
+trait Red {}
+trait Blue {}
+
+impl Red for Cardinal {}
+impl Blue for BlueJay {}
+
+fn red<T: Red>(t: &T) -> &'static str {
+    "red"
+}
+
+fn blue<T: Blue>(t: &T) -> &'static str {
+    "blue"
+}
+
+pub fn for_testcase() {
+    let cardinal = Cardinal;
+    let blue_jay = BlueJay;
+    let _tur_key = Turkey;
+
+    println!("A cardinal is {}", red(&cardinal));
+    println!("A blue jay is {}", blue(&blue_jay));
+}
+
+//多重约束可以用+连接，和平常一样，类型之间使用，隔开
+//多重约束用加号连接
+fn compare_print<T: Debug + Display>(t: &T) {
+    println!("Debug: {:?}", t);
+    println!("Display: {}", t);
+}
+
+//类型之间用逗号隔开
+fn compare_types<T: Debug, U: Debug>(t: &T, u: &U) {
+    println!("t: {:?}", t);
+    println!("u: {:?}", u);
+}
+
+pub fn for_multi() {
+    let string = "words";
+    let array = [1, 2, 3];
+    let vec = vec![1, 2, 3];
+
+    compare_print(&string);
+    compare_types(&array, &vec);
+}
+
+//where分句，约束也可以使用where分句来表达
+// impl<A: TraitB + TraitC, D: TraitE + TraitF> MyTrait<A, D> for YourType {}
+// //使用where从句来表达约束
+// impl<A, D> MyTrait<A, D> for YourType
+// where
+//     A: TraitB + TraitC,
+//     D: TraitE + TraitF,
+// {
+// }
+
+//当使用where从句比正常语法更有表现力时，本例中的impl如果不用where从句，就无法直接表达
+trait PrintInOption {
+    fn println_in_option(self);
+}
+
+impl<T> PrintInOption for T
+where
+    Option<T>: Debug,
+{
+    fn println_in_option(self) {
+        println!("{:?}", Some(self));
+    }
+}
+
+pub fn for_where() {
+    let vec = vec![1, 2, 3];
+    vec.println_in_option();
+}
+
+//newtype惯用法，能保证在编译时，提供给程序的都是正确的类型
+struct Years(i64);
+struct Days(i64);
+
+//为struct实现
+impl Years {
+    pub fn to_days(&self) -> Days {
+        Days(self.0 * 365)
+    }
+}
+
+impl Days {
+    pub fn to_years(&self) -> Years {
+        Years(self.0 / 365)
+    }
+}
+
+fn old_enough(age: &Years) -> bool {
+    age.0 >= 18
+}
+
+pub fn for_new_types() {
+    let age = Years(5);
+    let age_days = age.to_days();
+    println!("Old enough {}", old_enough(&age));
+    println!("Old enough {}", old_enough(&age_days.to_years()));
+    // println!("Old enough {}", old_enough(&age_days));
+}
