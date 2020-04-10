@@ -272,3 +272,111 @@ pub fn for_new_types() {
     println!("Old enough {}", old_enough(&age_days.to_years()));
     // println!("Old enough {}", old_enough(&age_days));
 }
+
+// struct Container(i32, i32);
+//
+// //这个trait检查给定的2个项是否存储与容器中
+// //并且能够获得容器的第一个或最后一个值
+// trait Contains<A, B> {
+//     fn contains(&self, _: &A, _: &B) -> bool; // 显式的要求A和B
+//     fn first(&self) -> i32; // 未显式的要求A和B
+//     fn last(&self) -> i32;
+// }
+//
+// impl Contains<i32, i32> for Container {
+//     //如果存储的数字和给定的相等则为真
+//     fn contains(&self, number_1: &i32, number_2: &i32) -> bool {
+//         &self.0 == number_1 && &self.1 == number_2
+//     }
+//
+//     fn first(&self) -> i32 {
+//         self.0
+//     }
+//
+//     fn last(&self) -> i32 {
+//         self.1
+//     }
+// }
+//
+// //容器C就包含了A和B类型，鉴于此，必须指出A和B显得很麻烦
+// fn difference<A, B, C>(container: &C) -> i32
+// where
+//     C: Contains<A, B>,
+// {
+//     container.last() - container.first()
+// }
+//
+// pub fn for_assoc() {
+//     let number_1 = 3;
+//     let number_2 = 10;
+//
+//     let container = Container(number_1, number_2);
+//
+//     println!(
+//         "Does container contain {} and {}: {}",
+//         &number_1,
+//         &number_2,
+//         container.contains(&number_1, &number_2)
+//     );
+//
+//     println!("First number: {}", container.first());
+//     println!("Last number: {}", container.last());
+//     println!("The difference is: {}", difference(&container));
+// }
+
+struct Container(i32, i32);
+//通过把容器内部的类型放到trait中作为输出类型，使用关联类型增加了代码的可读性，这样的trait的定义语法如下
+trait Contains {
+    type A;
+    type B;
+
+    //    这种语法能够范型的表示这些新类型
+    fn contains(&self, _: &Self::A, _: &Self::B) -> bool;
+
+    fn first(&self) -> i32;
+    fn last(&self) -> i32;
+}
+
+// //使用关联类型
+// fn difference<C:Contains>(container: &C) -> i32{
+//
+// }
+
+impl Contains for Container {
+    type A = i32;
+    type B = i32;
+
+    fn contains(&self, number_1: &Self::A, number_2: &Self::B) -> bool {
+        &self.0 == number_1 && &self.1 == number_2
+    }
+
+    fn first(&self) -> i32 {
+        self.0
+    }
+
+    fn last(&self) -> i32 {
+        self.1
+    }
+}
+
+//约束类型C必须实现Contains trait
+fn difference<C: Contains>(c: &C) -> i32 {
+    c.last() - c.first()
+}
+
+pub fn for_types() {
+    let number_1 = 3;
+    let number_2 = 10;
+
+    let container = Container(number_1, number_2);
+
+    println!(
+        "Does container contain {} and {} :{}",
+        &number_1,
+        &number_2,
+        container.contains(&number_1, &number_2)
+    );
+    println!("First: {}", container.first());
+    println!("Last: {}", container.last());
+    println!("The difference is: {}", difference(&container));
+}
