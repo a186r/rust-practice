@@ -225,3 +225,61 @@ pub fn for_alias() {
         borrowed_point.x, borrowed_point.y, borrowed_point.z
     );
 }
+
+//通过let绑定来进行模式匹配或者解构时，ref关键字可以用来创建结构体/元组的字段的引用。
+#[derive(Clone, Copy)]
+struct Point2 {
+    x: i32,
+    y: i32,
+}
+
+pub fn for_ref() {
+    let c = 'Q';
+
+    // 赋值语句左边的ref关键字等价于右边的 & 符号
+    let ref ref_c1 = c;
+    let ref_c2 = &c;
+
+    println!("ref_c1 equals ref_c2: {}", *ref_c1 == *ref_c2);
+
+    let point2 = Point2 { x: 0, y: 0 };
+
+    // 在解构一个结构体时，ref同样有效
+    let _copy_of_x = {
+        //解构结构体
+        let Point2 {
+            x: ref ref_to_x,
+            y: _,
+        } = point2;
+        // 返回一个point的x字段的拷贝
+        *ref_to_x
+    };
+
+    let mut mutable_point2 = point2;
+
+    {
+        let Point2 {
+            x: _,
+            y: ref mut mut_ref_to_y,
+        } = mutable_point2;
+
+        *mut_ref_to_y = 1;
+    }
+
+    println!("point is ({}, {})", point2.x, point2.y);
+    println!(
+        "mutable_point is ({}, {})",
+        mutable_point2.x, mutable_point2.y
+    );
+
+    // 包含一个指针的可变元组
+    let mut mutable_tuple = (Box::new(5u32), 3u32);
+
+    {
+        // 解构mutable_tuple来改变last的值
+        let (_, ref mut last) = mutable_tuple;
+        *last = 2u32;
+    }
+
+    println!("tuple is {:?}", mutable_tuple);
+}
