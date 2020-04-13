@@ -1,5 +1,5 @@
-use rust_by_example::bin::chapter15::for_mut;
+use rust_by_example::bin::chapter15::for_alias;
 
 fn main() {
-    for_mut();
+    for_alias();
 }

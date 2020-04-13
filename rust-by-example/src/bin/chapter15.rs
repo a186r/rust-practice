@@ -106,3 +106,122 @@ pub fn for_borrow() {
     let boxed_i32 = Box::new(5_i32);
     let stacked_i32 = 6_i32;
 }
+
+#[allow(dead_code)]
+#[derive(Clone, Copy)]
+struct Book {
+    author: &'static str,
+    title: &'static str,
+    year: u32,
+}
+
+//此函数接受一个对Book类型的引用
+fn borrow_book(book: &Book) {
+    println!(
+        "I immutably borrowed {} - {} edition",
+        book.title, book.year
+    );
+}
+
+//此函数接受一个对可变的Book类型的引用，它将年份改为2014年
+fn new_edition(book: &mut Book) {
+    book.year = 2020;
+    println!(
+        "I immutably borrowed {} - {} edition",
+        book.title, book.year
+    );
+}
+
+pub fn for_mut1() {
+    let immutabook = Book {
+        author: "Douagsadflkj",
+        title: "dsafagasgsd",
+        year: 1967,
+    };
+
+    //    创建一个immutabook的可变拷贝
+    let mut mutabook = immutabook;
+
+    //    不可变地借用一个不可变对象
+    borrow_book(&immutabook);
+    //    不可变地借用一个可变对象
+    borrow_book(&mutabook);
+
+    //    可变地借用一个可变对象
+    new_edition(&mut mutabook);
+    //    可变地借用给一个不可变对象——错误
+    // new_edition(&immutabook);
+}
+
+//当数据被不可变地借用时，它还会冻结freeze，已冻结的数据无法通过原始对象来修改，直到对这些数据的所有引用离开作用域为止
+pub fn for_freeze() {
+    let mut _mutable_integer = 7i32;
+
+    {
+        let large_integer = &_mutable_integer;
+        // _mutable_integer = 50; // 报错，在被作用域被冻结
+        println!("Immutably borrowed {}", large_integer);
+    }
+
+    //    正常运行，在这个作用域没有冻结
+    _mutable_integer = 3i32;
+}
+
+//数据可以进行多次不可变借用，但是在不可变借用的期间，原始数据不可进行可变借用，另一方面，在同一时刻内只允许有一个可变借用。
+//只有在可变引用离开作用域之后，原始数据才可再次被借用
+struct Point {
+    x: i32,
+    y: i32,
+    z: i32,
+}
+
+pub fn for_alias() {
+    let mut point = Point { x: 0, y: 0, z: 0 };
+    {
+        let borrowed_point = &point;
+        let another_borrow = &point;
+        //    通过引用和原始所有者来访问数据
+        println!(
+            "Point has coordinates: ({}, {}, {})",
+            borrowed_point.x, borrowed_point.y, borrowed_point.z
+        );
+
+        // 不能可变的借用point，因为它现在有不可变的借用，出作用域才可以可变的借用，因为数据在不可变的借用时，已经被冻结了
+        // let mutable_borrow = &mut point;
+        // 此处再次使用被借用的值
+        println!(
+            "Point has corrdinates: ({}, {}, {})",
+            borrowed_point.x, another_borrow.y, point.z
+        );
+        // 到这里，上面的不可变借用才走出作用域，这行之后，数据才被解冻，可以声明和使用不可变借用
+    }
+
+    {
+        let mut mutable_borrow = &mut point;
+
+        //    通过可变引用来改变数据
+        mutable_borrow.x = 5;
+        mutable_borrow.y = 2;
+        mutable_borrow.z = 1;
+
+        // 报错，不能打印，不能不可变的借用point，因为现在它有可变借用了
+        // let y = &point.y;
+
+        // 报错，不能打印，因为println会创建一个不可变引用
+        // println!("Point Z coordinate is {}", point.z);
+
+        // 可以工作，可变引用可以作为不可变的传给println
+        println!(
+            "Point has coordinates: ({}, {}, {})",
+            mutable_borrow.x, mutable_borrow.y, mutable_borrow.z
+        );
+
+        //    可变引用离开作用域
+    }
+    // 现在又可以不可变地借用point了
+    let borrowed_point = &point;
+    println!(
+        "Point has coordinates: ({}, {}, {})",
+        borrowed_point.x, borrowed_point.y, borrowed_point.z
+    );
+}
