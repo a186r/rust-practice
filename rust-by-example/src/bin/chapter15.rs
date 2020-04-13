@@ -1,3 +1,5 @@
+use std::fmt::Debug;
+
 //Rust强制实行资源获取即初始化，所以任何对象在离开作用域时，它的析构函数就被调用，然后它占有的资源就被释放
 fn create_box() {
     //    在堆上分配一个整型数据
@@ -282,4 +284,170 @@ pub fn for_ref() {
     }
 
     println!("tuple is {:?}", mutable_tuple);
+}
+
+// 生命周期
+pub fn for_lifetime() {
+    let i = 3;
+    {
+        let borrow1 = &i;
+        println!("borrow1 is {}", borrow1);
+    }
+
+    {
+        let borrow2 = &i;
+        println!("borrow2 is {}", borrow2);
+    }
+}
+
+// 函数接受2个i32的引用，它们有不同的生命周期'a和'b
+fn print_refs<'a, 'b>(x: &'a i32, y: &'b i32) {
+    println!("x is {} and y is {}", x, y);
+}
+
+// 不带参数的函数，不过又一个生命周期参数'a
+pub fn failed_borrow<'a>() {
+    let _x = 12;
+    // 报错，生命周期比y短，短生命周期不能强制转换成长生命周期
+    // let y: &'a i32 = &_x;
+}
+
+pub fn for_explicit() {
+    let (four, nine) = (4, 9);
+
+    print_refs(&four, &nine);
+    failed_borrow();
+}
+
+// 一个拥有生命周期'a的输入引用，其中'a的存活时间至少与函数的一样长
+fn print_one<'a>(x: &'a i32) {
+    println!("print_one: x is {}", x);
+}
+
+// 可变引用同样也可能拥有生命周期
+fn add_one<'a>(x: &'a mut i32) {
+    *x += 1;
+}
+
+fn print_multi<'a, 'b>(x: &'a i32, y: &'b i32) {
+    println!("print_multi: x is {}, y is {}", x, y);
+}
+
+// 返回传递进来的引用也是可行的,但必须返回正确的生命周期
+fn pass_x<'a, 'b>(x: &'a i32, _: &'b i32) -> &'a i32 {
+    x
+}
+
+// fn invalid_output<'a>() -> &'a String {
+//     &String::from("foo")
+// }
+
+pub fn for_fn() {
+    let x = 7;
+    let y = 9;
+    print_one(&x);
+    print_multi(&x, &y);
+
+    let z = pass_x(&x, &y);
+    print_one(z);
+
+    let mut t = 3;
+    add_one(&mut t);
+    print_one(&t);
+}
+
+//方法的标注和函数类似
+struct Owner(i32);
+
+impl Owner {
+    fn add_one<'a>(&'a mut self) {
+        self.0 += 1;
+    }
+
+    fn print<'a>(&'a self) {
+        println!("print: {}", self.0);
+    }
+}
+
+pub fn for_methods() {
+    let mut owner = Owner(19);
+    owner.add_one();
+    owner.print();
+}
+
+// 在结构体中标注生命周期也和函数类似
+#[derive(Debug)]
+struct Borrowed<'a>(&'a i32);
+
+#[derive(Debug)]
+struct NamedBorrowed<'a> {
+    x: &'a i32,
+    y: &'a i32,
+}
+
+#[derive(Debug)]
+enum Either<'a> {
+    Num(i32),
+    Ref(&'a i32),
+}
+
+pub fn for_struct() {
+    let x = 18;
+    let y = 15;
+
+    let single = Borrowed(&x);
+    let double = NamedBorrowed { x: &x, y: &y };
+    let reference = Either::Ref(&x);
+    let number = Either::Num(y);
+
+    println!("x is borrowed in {:?}", single);
+    println!("x and y are borrowed in {:?}", double);
+    println!("x is borrowed in {:?}", reference);
+    println!("y is not borrowed in {:?}", number);
+
+    // let b: Borrowed2 = Default::default();
+    //前面已经声明b的类型了，所以直接使用Default::default()
+    let b: Borrowed2 = Default::default();
+    println!("b is {:?}", b);
+}
+
+//trait方法中生命周期的标注基本上与函数类似，impl也可能有生命周期的标注
+#[derive(Debug)]
+struct Borrowed2<'a> {
+    x: &'a i32,
+}
+
+//给impl标注生命周期
+impl<'a> Default for Borrowed2<'a> {
+    fn default() -> Self {
+        Self { x: &10 }
+    }
+}
+
+// Ref包含一个指向泛型类型T的引用，其中T拥有一个未知的生命周期'a
+// T拥有生命周期限制，T中的任何引用都必须比'a活得更长
+// 另外，Ref的生命周期也不能超出'a
+#[derive(Debug)]
+struct Ref<'a, T: 'a>(&'a T);
+
+// 一个泛型函数，使用Debug trait来打印内容
+fn print<T>(t: T)
+where
+    T: Debug,
+{
+    println!("print: t is {:?}", t);
+}
+
+fn print_ref<'a, T>(t: &'a T)
+where
+    T: Debug + 'a,
+{
+    println!("print_ref: t is {:?}", t);
+}
+
+pub fn for_bounds() {
+    let x = 7;
+    let ref_x = Ref(&x);
+    print_ref(&ref_x);
+    print(ref_x);
 }
