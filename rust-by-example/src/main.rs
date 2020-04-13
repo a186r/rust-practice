@@ -1,5 +1,5 @@
-use rust_by_example::bin::chapter14::for_testcase1;
+use rust_by_example::bin::chapter15::for_mut;
 
 fn main() {
-    for_testcase1();
+    for_mut();
 }
