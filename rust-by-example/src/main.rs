@@ -1,5 +1,5 @@
-use rust_by_example::bin::chapter17::for_variadics;
+use rust_by_example::bin::chapter18::for_map;
 
 fn main() {
-    for_variadics();
+    for_map();
 }
