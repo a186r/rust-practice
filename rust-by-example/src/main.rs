@@ -1,5 +1,5 @@
-use rust_by_example::bin::chapter15::for_elision;
+use rust_by_example::bin::chapter16::for_clone;
 
 fn main() {
-    for_elision();
+    for_clone();
 }
