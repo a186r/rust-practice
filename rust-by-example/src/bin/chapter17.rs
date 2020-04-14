@@ -78,7 +78,7 @@ pub fn for_repeat() {
 }
 
 // 不写重复代码
-macro_rules! asset_equal_len {
+macro_rules! assert_equal_len {
     ($a:ident, $b:ident, $func:ident, $op:tt) => {
         assert!(
             $a.len() == $b.len(),
@@ -101,4 +101,76 @@ macro_rules! op {
             }
         }
     };
+}
+
+// op!(add_assign, Add, +=, add);
+// op!(mul_assign, Mul, *=, mul);
+// op!(sub_assign, Sub, -=, sub);
+
+mod test {
+    use std::iter;
+    macro_rules! test {
+        ($func:ident, $x:expr, $y:expr, $z:expr) => {
+            #[test]
+            fn $func() {
+                for size in 0usize..10 {
+                    let mut x: Vec<_> = iter::repeat($x).take(size).collect();
+                    let y: Vec<_> = iter::repeat($y).take(size).collect();
+                    let z: Vec<_> = iter::repeat($z).take(size).collect();
+
+                    super::$func(&mut x, &y);
+                    assert_eq!(x, z);
+                }
+            }
+        };
+    }
+
+    // 测试
+    test!(add_assign, 1u32, 2u32, 3u32);
+}
+
+macro_rules! calculate {
+    (eval $e:expr) => {
+        {
+            // 强制类型为整型
+            let val: usize = $e;
+            println!("{} = {}", stringify!{$e}, val);
+        }
+    };
+}
+
+pub fn for_dsl() {
+    calculate! {
+        eval 1+2
+    }
+
+    calculate! {
+        eval (1+2) * (3/4)
+    }
+}
+
+// 可变参数接口，可变参数可以接收任意数目的参数
+macro_rules! calculate2 {
+    (eval $e:expr) => {
+        {
+            let val: usize = $e;
+            println!("{} = {}", stringify!{$e}, val);
+        }
+    };
+
+    // 递归的拆解多重的eval
+    (eval $e:expr, $(eval $es:expr), +) => {
+        {
+            calculate2!{eval $e}
+            calculate2!{$(eval $es), +}
+        }
+    };
+}
+
+pub fn for_variadics() {
+    calculate2! {
+        eval 1+2,
+        eval 3+4,
+        eval (2*3)+ 1
+    }
 }
