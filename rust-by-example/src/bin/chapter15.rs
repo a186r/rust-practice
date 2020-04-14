@@ -1,3 +1,4 @@
+use crate::bin::chapter15::Either::Num;
 use std::fmt::Debug;
 
 //Rust强制实行资源获取即初始化，所以任何对象在离开作用域时，它的析构函数就被调用，然后它占有的资源就被释放
@@ -450,4 +451,75 @@ pub fn for_bounds() {
     let ref_x = Ref(&x);
     print_ref(&ref_x);
     print(ref_x);
+}
+
+// 一个较长的生命周期可以强制转换成一个较短的生命周期，使它在一个通常情况下不能工作的作用域内也能正常工作。
+fn multiply<'a>(first: &'a i32, second: &'a i32) -> i32 {
+    first * second
+}
+
+//<'a: 'b, 'b> 读作'a至少和'b一样长
+//接受一个&'a i32类型并返回一个&'b i32类型，强制转换得到结果
+fn choose_first<'a: 'b, 'b>(first: &'a i32, _: &'b i32) -> &'b i32 {
+    first
+}
+
+pub fn for_coercion() {
+    let first = 2;
+
+    {
+        let second = 3;
+        println!("The product is {}", multiply(&first, &second));
+        println!("{} is the first", choose_first(&first, &second));
+    }
+}
+
+//'static生命周期是可能的生命周期中最长的，它会在整个程序运行的时期中存在，'static生命周期也可被强制转换成一个更短的生命周期
+// 产生一个拥有'static生命周期的常量
+static NUM: i32 = 18;
+
+fn coerce_static<'a>(_: &'a i32) -> &'a i32 {
+    &NUM
+}
+
+pub fn for_static_lt() {
+    {
+        // 产生一个string字面量并打印
+        let static_string = "I'm in read-only memory";
+        println!("static_string: {}", static_string);
+    }
+
+    {
+        let lifetime_num = 9;
+        let corece_static = coerce_static(&lifetime_num);
+        println!("coerced_ static: {}", corece_static);
+    }
+
+    println!("NUM: {} stays accessible!", NUM);
+}
+
+fn elided_input(x: &i32) {
+    println!("elided_input: {}", x);
+}
+
+fn annotated_input<'a>(x: &'a i32) {
+    println!("annotated_input: {}", x);
+}
+
+fn elided_pass(x: &i32) -> &i32 {
+    x
+}
+
+fn annotated_pass<'a>(x: &'a i32) -> &'a i32 {
+    x
+}
+
+pub fn for_elision() {
+    let x = 3;
+
+    elided_input(&x);
+    elided_pass(&x);
+
+    println!("elided_pass: {}", elided_pass(&x));
+    println!("elided_input: {}", annotated_pass(&x));
 }
