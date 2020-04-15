@@ -1,5 +1,5 @@
-use rust_by_example::bin::chapter18::for_map;
+use rust_by_example::bin::chapter18::for_result_map_v2;
 
 fn main() {
-    for_map();
+    for_result_map_v2();
 }
