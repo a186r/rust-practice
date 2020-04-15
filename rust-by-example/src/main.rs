@@ -1,5 +1,5 @@
-use rust_by_example::bin::chapter18::for_result_v5;
+use rust_by_example::bin::chapter18::for_boxing;
 
 fn main() {
-    for_result_v5();
+    for_boxing();
 }

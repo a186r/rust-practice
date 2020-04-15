@@ -114,190 +114,325 @@
 //
 #![allow(dead_code)]
 
-use std::num::ParseIntError;
+use std::fmt::{Error, Formatter};
+use std::intrinsics::write_bytes;
+use std::{error, fmt};
 
-#[derive(Debug)]
-enum Food {
-    CordonBleu,
-    Steak,
-    Sushi,
-}
+// #[derive(Debug)]
+// enum Food {
+//     CordonBleu,
+//     Steak,
+//     Sushi,
+// }
+//
+// #[derive(Debug)]
+// enum Day {
+//     Monday,
+//     Tuesday,
+//     Wednesday,
+// }
+//
+// fn have_ingredients(food: Food) -> Option<Food> {
+//     match food {
+//         Food::Sushi => None,
+//         _ => Some(food),
+//     }
+// }
+//
+// fn have_recipe(food: Food) -> Option<Food> {
+//     match food {
+//         Food::CordonBleu => None,
+//         _ => Some(food),
+//     }
+// }
+//
+// fn cookable_v1(food: Food) -> Option<Food> {
+//     match have_ingredients(food) {
+//         None => None,
+//         Some(food) => match have_recipe(food) {
+//             None => None,
+//             Some(food) => Some(food),
+//         },
+//     }
+// }
+//
+// // 使用and_then
+// fn cookable_v2(food: Food) -> Option<Food> {
+//     have_ingredients(food).and_then(have_recipe)
+// }
+//
+// fn eat(food: Food, day: Day) {
+//     match cookable_v2(food) {
+//         Some(food) => println!("Yay! On {:?} we get to eat {:?}", day, food),
+//         None => println!("Oh no, we don't get to eat on {:?}?", day),
+//     }
+// }
+//
+// pub fn for_and_then() {
+//     let (cordon_blue, steak, sushi) = (Food::CordonBleu, Food::Steak, Food::Sushi);
+//
+//     eat(cordon_blue, Day::Monday);
+//     eat(steak, Day::Tuesday);
+//     eat(sushi, Day::Wednesday);
+// }
+//
+// // Result是Option的类型更丰富的版本，描述的是可能的错误而不是可能的不存在
+// fn multiply(first_number_str: &str, second_number_str: &str) -> i32 {
+//     let first_number = first_number_str.parse::<i32>().unwrap();
+//     let second_number = second_number_str.parse::<i32>().unwrap();
+//     first_number * second_number
+// }
+//
+// pub fn for_result() {
+//     let twenty = multiply("10", "2");
+//     println!("double is {}", twenty);
+//
+//     // let tt = multiply("t", "2");
+//     // println!("double is {}", tt);
+//     // 在失败情况下，parse产生一个错误，留给unwrap来解包并产生panic，另外，panic会退出我们的程序，来提供一个让人不爽的错误消息
+//
+//     // 这样可以知道函数的返回类型详情
+//     // let i: () = "t".parse::<i32>();
+// }
+//
+// // 使用简单的match语句导致更加繁琐的代码
+// fn multiply_v1(first_number_str: &str, second_number_str: &str) -> Result<i32, ParseIntError> {
+//     match first_number_str.parse::<i32>() {
+//         Ok(first_number) => match second_number_str.parse::<i32>() {
+//             Ok(second_number) => Ok(first_number * second_number),
+//             Err(e) => Err(e),
+//         },
+//         Err(e) => Err(e),
+//     }
+// }
+//
+// fn print(result: Result<i32, ParseIntError>) {
+//     match result {
+//         Ok(n) => println!("n is {}", n),
+//         Err(e) => println!("Error: {}", e),
+//     }
+// }
+//
+// pub fn for_result_map_v1() {
+//     let twenty = multiply_v1("10", "2");
+//     print(twenty);
+//
+//     // 这种情况下会提供一条更有用的错误信息
+//     let tt = multiply_v1("t", "2");
+//     print(tt);
+// }
+//
+// // 幸运的是，Option的map、and_then、以及很多其他组合算子也为Result实现了
+// // 下面除了写法外，与上面那个完全一致
+// // 它的作用是：如果值是合法的，计算其乘积，否则返回错误
+// fn multiply_v2(first_number_str: &str, second_number_str: &str) -> Result<i32, ParseIntError> {
+//     first_number_str.parse::<i32>().and_then(|first_number| {
+//         second_number_str
+//             .parse::<i32>()
+//             .map(|second_number| first_number * second_number)
+//     })
+// }
+//
+// fn print_v2(result: Result<i32, ParseIntError>) {
+//     match result {
+//         Ok(n) => println!("n is {}", n),
+//         Err(e) => println!("Error: {}", e),
+//     }
+// }
+//
+// pub fn for_result_map_v2() {
+//     let twenty = multiply_v2("10", "2");
+//     print_v2(twenty);
+//
+//     // 这种情况下就会提供一条更有效的信息
+//     let tt = multiply_v2("t", "2");
+//     print_v2(tt);
+// }
+//
+// // 为带有错误类型ParseIntError的Result定义一个泛型别名
+// type AliasedResult<T> = Result<T, ParseIntError>;
+//
+// fn multiply_v3(first_number_str: &str, second_number_str: &str) -> AliasedResult<i32> {
+//     first_number_str.parse::<i32>().and_then(|first_number| {
+//         second_number_str
+//             .parse::<i32>()
+//             .map(|second_number| first_number * second_number)
+//     })
+// }
+//
+// pub fn for_result_alias() {
+//     print_v2(multiply_v3("10", "2"));
+//     print_v2(multiply_v3("t", "2"));
+// }
+//
+// // 如果发生了错误我们可以停止函数的执行然后返回错误，对有些人来说，这样的代码更好写，更易读
+// fn multiply_v4(first_number_str: &str, second_number_str: &str) -> Result<i32, ParseIntError> {
+//     let first_number = match first_number_str.parse::<i32>() {
+//         Ok(first_number) => first_number,
+//         Err(e) => return Err(e),
+//     };
+//
+//     let second_number = match second_number_str.parse::<i32>() {
+//         Ok(second_number) => second_number,
+//         Err(e) => return Err(e),
+//     };
+//
+//     Ok(first_number * second_number)
+// }
+//
+// pub fn for_result_v4() {
+//     print_v2(multiply_v4("10", "2"));
+//     print_v2(multiply_v4("t", "2"));
+// }
+//
+// // ?问号几乎就等于一个会返回Err而不是panic的unwrap
+// fn multiply_v5(first_number_str: &str, second_number_str: &str) -> Result<i32, ParseIntError> {
+//     let first_number = first_number_str.parse::<i32>()?;
+//     let second_number = second_number_str.parse::<i32>()?;
+//     Ok(first_number * second_number)
+// }
+//
+// pub fn for_result_v5() {
+//     print_v2(multiply_v5("10", "2"));
+//     print_v2(multiply_v5("t", "2"));
+// }
+//
+// // try!已经过时
+// // fn multiply_v6(first_number_str: &str, second_number_str: &str) -> Result<i32, ParseIntError>{
+// //     let first_number = try!(first_number_str.parse::<i32>());
+// //     let second_number = try!(first_number_str.parse::<i32>());
+// //     Ok(first_number * second_number)
+// // }
+//
+// fn double_first(vec: Vec<&str>) -> i32 {
+//     let first = vec.first().unwrap(); // 生成错误1
+//     2 * first.parse::<i32>().unwrap() // 生成错误2
+// }
+//
+// pub fn for_m_error_types() {
+//     let number = vec!["42", "93", "18"];
+//     // let empty = vec![];
+//     let strings = vec!["tofu", "93", "18"];
+//
+//     println!("The first doubled is {}", double_first(number));
+//     // println!("The first doubled is {}", double_first(empty));
+//     // println!("The first doubled is {}", double_first(strings));
+// }
+//
+// // 处理混合错误类型的最基本的手段就是让他们互相包含
+// fn double_first_v1(vec: Vec<&str>) -> Option<Result<i32, ParseIntError>> {
+//     vec.first().map(|first| first.parse::<i32>().map(|n| 2 * n))
+// }
+//
+// pub fn for_option() {
+//     let number = vec!["42", "93", "18"];
+//     let empty = vec![];
+//     let strings = vec!["tofu", "93", "18"];
+//
+//     println!("The first doubled is {:?}", double_first_v1(number));
+//     println!("The first doubled is {:?}", double_first_v1(empty));
+//     println!("The first doubled is {:?}", double_first_v1(strings));
+// }
+//
+// // 有时候我们不想再处理错误，比如使用?的时候，但是如果Option是None则继续处理错误，一些组合算子可以让我们轻松的交换Result和Option。
+// fn double_first_v2(vec: Vec<&str>) -> Result<Option<i32>, ParseIntError> {
+//     let opt = vec.first().map(|first| first.parse::<i32>().map(|n| 2 * n));
+//     opt.map_or(Ok(None), |r| r.map(Some))
+// }
+//
+// pub fn for_option_v2() {
+//     let numbers = vec!["42", "93", "18"];
+//     let empty = vec![];
+//     let strings = vec!["tofu", "93", "18"];
+//
+//     println!("The first doubled is {:?}", double_first(numbers));
+//     println!("The first doubled is {:?}", double_first(empty));
+//     println!("The first doubled is {:?}", double_first(strings));
+// }
 
-#[derive(Debug)]
-enum Day {
-    Monday,
-    Tuesday,
-    Wednesday,
-}
+type Result<T> = std::result::Result<T, DoubleError>;
 
-fn have_ingredients(food: Food) -> Option<Food> {
-    match food {
-        Food::Sushi => None,
-        _ => Some(food),
+#[derive(Debug, Clone)]
+struct DoubleError;
+
+impl fmt::Display for DoubleError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "invalid first item to double")
     }
 }
 
-fn have_recipe(food: Food) -> Option<Food> {
-    match food {
-        Food::CordonBleu => None,
-        _ => Some(food),
+impl error::Error for DoubleError {
+    fn source(&self) -> Option<&(dyn error::Error + 'static)> {
+        // 泛型错误，没有记录其内部原因。
+        None
     }
 }
 
-fn cookable_v1(food: Food) -> Option<Food> {
-    match have_ingredients(food) {
-        None => None,
-        Some(food) => match have_recipe(food) {
-            None => None,
-            Some(food) => Some(food),
-        },
-    }
+fn double_first(vec: Vec<&str>) -> Result<i32> {
+    vec.first()
+        .ok_or(DoubleError)
+        .and_then(|s| s.parse::<i32>().map_err(|_| DoubleError).map(|i| 2 * i))
 }
 
-// 使用and_then
-fn cookable_v2(food: Food) -> Option<Food> {
-    have_ingredients(food).and_then(have_recipe)
-}
-
-fn eat(food: Food, day: Day) {
-    match cookable_v2(food) {
-        Some(food) => println!("Yay! On {:?} we get to eat {:?}", day, food),
-        None => println!("Oh no, we don't get to eat on {:?}?", day),
-    }
-}
-
-pub fn for_and_then() {
-    let (cordon_blue, steak, sushi) = (Food::CordonBleu, Food::Steak, Food::Sushi);
-
-    eat(cordon_blue, Day::Monday);
-    eat(steak, Day::Tuesday);
-    eat(sushi, Day::Wednesday);
-}
-
-// Result是Option的类型更丰富的版本，描述的是可能的错误而不是可能的不存在
-fn multiply(first_number_str: &str, second_number_str: &str) -> i32 {
-    let first_number = first_number_str.parse::<i32>().unwrap();
-    let second_number = second_number_str.parse::<i32>().unwrap();
-    first_number * second_number
-}
-
-pub fn for_result() {
-    let twenty = multiply("10", "2");
-    println!("double is {}", twenty);
-
-    // let tt = multiply("t", "2");
-    // println!("double is {}", tt);
-    // 在失败情况下，parse产生一个错误，留给unwrap来解包并产生panic，另外，panic会退出我们的程序，来提供一个让人不爽的错误消息
-
-    // 这样可以知道函数的返回类型详情
-    // let i: () = "t".parse::<i32>();
-}
-
-// 使用简单的match语句导致更加繁琐的代码
-fn multiply_v1(first_number_str: &str, second_number_str: &str) -> Result<i32, ParseIntError> {
-    match first_number_str.parse::<i32>() {
-        Ok(first_number) => match second_number_str.parse::<i32>() {
-            Ok(second_number) => Ok(first_number * second_number),
-            Err(e) => Err(e),
-        },
-        Err(e) => Err(e),
-    }
-}
-
-fn print(result: Result<i32, ParseIntError>) {
+fn print(result: Result<i32>) {
     match result {
-        Ok(n) => println!("n is {}", n),
+        Ok(n) => println!("The first doubled is {}", n),
         Err(e) => println!("Error: {}", e),
     }
 }
 
-pub fn for_result_map_v1() {
-    let twenty = multiply_v1("10", "2");
-    print(twenty);
+pub fn for_define() {
+    let numbers = vec!["42", "93", "18"];
+    let empty = vec![];
+    let strings = vec!["tofu", "93", "18"];
 
-    // 这种情况下会提供一条更有用的错误信息
-    let tt = multiply_v1("t", "2");
-    print(tt);
+    print(double_first(numbers));
+    print(double_first(empty));
+    print(double_first(strings));
 }
 
-// 幸运的是，Option的map、and_then、以及很多其他组合算子也为Result实现了
-// 下面除了写法外，与上面那个完全一致
-// 它的作用是：如果值是合法的，计算其乘积，否则返回错误
-fn multiply_v2(first_number_str: &str, second_number_str: &str) -> Result<i32, ParseIntError> {
-    first_number_str.parse::<i32>().and_then(|first_number| {
-        second_number_str
-            .parse::<i32>()
-            .map(|second_number| first_number * second_number)
-    })
+// 如果又想写简单的代码，又想保存原始错误信息，一个方法是把它们装箱Box，这样做的坏处就是，被包装的错误类型只能在运行时了解，而不能被静态的判断
+// 取别名
+type Result_Err<T> = std::result::Result<T, Box<error::Error>>;
+
+#[derive(Debug, Clone)]
+struct EmptyVec;
+
+impl fmt::Display for EmptyVec {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        write!(f, "invalid first item to double")
+    }
 }
 
-fn print_v2(result: Result<i32, ParseIntError>) {
+impl error::Error for EmptyVec {
+    fn description(&self) -> &str {
+        "invalid first item to double"
+    }
+
+    fn cause(&self) -> Option<&error::Error> {
+        None
+    }
+}
+
+fn double_first_v2(vec: Vec<&str>) -> Result_Err<i32> {
+    vec.first()
+        .ok_or_else(|| EmptyVec.into()) // 装箱，下面的into也是装箱
+        .and_then(|s| s.parse::<i32>().map_err(|e| e.into()).map(|i| 2 * i))
+}
+
+fn print_v2(result: Result_Err<i32>) {
     match result {
-        Ok(n) => println!("n is {}", n),
+        Ok(n) => println!("The first doubled is {}", n),
         Err(e) => println!("Error: {}", e),
     }
 }
 
-pub fn for_result_map_v2() {
-    let twenty = multiply_v2("10", "2");
-    print_v2(twenty);
+pub fn for_boxing() {
+    let numbers = vec!["42", "93", "18"];
+    let empty = vec![];
+    let strings = vec!["tofu", "93", "18"];
 
-    // 这种情况下就会提供一条更有效的信息
-    let tt = multiply_v2("t", "2");
-    print_v2(tt);
-}
-
-// 为带有错误类型ParseIntError的Result定义一个泛型别名
-type AliasedResult<T> = Result<T, ParseIntError>;
-
-fn multiply_v3(first_number_str: &str, second_number_str: &str) -> AliasedResult<i32> {
-    first_number_str.parse::<i32>().and_then(|first_number| {
-        second_number_str
-            .parse::<i32>()
-            .map(|second_number| first_number * second_number)
-    })
-}
-
-pub fn for_result_alias() {
-    print_v2(multiply_v3("10", "2"));
-    print_v2(multiply_v3("t", "2"));
-}
-
-// 如果发生了错误我们可以停止函数的执行然后返回错误，对有些人来说，这样的代码更好写，更易读
-fn multiply_v4(first_number_str: &str, second_number_str: &str) -> Result<i32, ParseIntError> {
-    let first_number = match first_number_str.parse::<i32>() {
-        Ok(first_number) => first_number,
-        Err(e) => return Err(e),
-    };
-
-    let second_number = match second_number_str.parse::<i32>() {
-        Ok(second_number) => second_number,
-        Err(e) => return Err(e),
-    };
-
-    Ok(first_number * second_number)
-}
-
-pub fn for_result_v4() {
-    print_v2(multiply_v4("10", "2"));
-    print_v2(multiply_v4("t", "2"));
-}
-
-// ?问号几乎就等于一个会返回Err而不是panic的unwrap
-fn multiply_v5(first_number_str: &str, second_number_str: &str) -> Result<i32, ParseIntError> {
-    let first_number = first_number_str.parse::<i32>()?;
-    let second_number = second_number_str.parse::<i32>()?;
-    Ok(first_number * second_number)
-}
-
-pub fn for_result_v5() {
-    print_v2(multiply_v5("10", "2"));
-    print_v2(multiply_v5("t", "2"));
-}
-
-// try!已经过时
-fn multiply_v6(first_number_str: &str, second_number_str: &str) -> Result<i32, ParseIntError>{
-    let first_number = try!(first_number_str.parse::<i32>());
-    let second_number = try!(first_number_str.parse::<i32>());
-    Ok(first_number * second_number)
+    print(double_first(numbers));
+    print(double_first(empty));
+    print(double_first(strings));
 }
