@@ -246,3 +246,58 @@ pub fn for_result_map_v2() {
     let tt = multiply_v2("t", "2");
     print_v2(tt);
 }
+
+// 为带有错误类型ParseIntError的Result定义一个泛型别名
+type AliasedResult<T> = Result<T, ParseIntError>;
+
+fn multiply_v3(first_number_str: &str, second_number_str: &str) -> AliasedResult<i32> {
+    first_number_str.parse::<i32>().and_then(|first_number| {
+        second_number_str
+            .parse::<i32>()
+            .map(|second_number| first_number * second_number)
+    })
+}
+
+pub fn for_result_alias() {
+    print_v2(multiply_v3("10", "2"));
+    print_v2(multiply_v3("t", "2"));
+}
+
+// 如果发生了错误我们可以停止函数的执行然后返回错误，对有些人来说，这样的代码更好写，更易读
+fn multiply_v4(first_number_str: &str, second_number_str: &str) -> Result<i32, ParseIntError> {
+    let first_number = match first_number_str.parse::<i32>() {
+        Ok(first_number) => first_number,
+        Err(e) => return Err(e),
+    };
+
+    let second_number = match second_number_str.parse::<i32>() {
+        Ok(second_number) => second_number,
+        Err(e) => return Err(e),
+    };
+
+    Ok(first_number * second_number)
+}
+
+pub fn for_result_v4() {
+    print_v2(multiply_v4("10", "2"));
+    print_v2(multiply_v4("t", "2"));
+}
+
+// ?问号几乎就等于一个会返回Err而不是panic的unwrap
+fn multiply_v5(first_number_str: &str, second_number_str: &str) -> Result<i32, ParseIntError> {
+    let first_number = first_number_str.parse::<i32>()?;
+    let second_number = second_number_str.parse::<i32>()?;
+    Ok(first_number * second_number)
+}
+
+pub fn for_result_v5() {
+    print_v2(multiply_v5("10", "2"));
+    print_v2(multiply_v5("t", "2"));
+}
+
+// try!已经过时
+fn multiply_v6(first_number_str: &str, second_number_str: &str) -> Result<i32, ParseIntError>{
+    let first_number = try!(first_number_str.parse::<i32>());
+    let second_number = try!(first_number_str.parse::<i32>());
+    Ok(first_number * second_number)
+}
