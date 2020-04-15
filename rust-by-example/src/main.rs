@@ -1,5 +1,5 @@
-use rust_by_example::bin::chapter18::for_wrap_error;
+use rust_by_example::bin::chapter18::for_iter_result;
 
 fn main() {
-    for_wrap_error();
+    for_iter_result();
 }

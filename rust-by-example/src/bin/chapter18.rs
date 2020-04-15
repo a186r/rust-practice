@@ -117,7 +117,7 @@
 use std::fmt::{Error, Formatter};
 use std::intrinsics::write_bytes;
 use std::num::ParseIntError;
-use std::{error, fmt};
+use std::{error, fmt, result};
 
 // #[derive(Debug)]
 // enum Food {
@@ -547,4 +547,33 @@ pub fn for_wrap_error() {
     print(double_first(numbers));
     print(double_first(empty));
     print(double_first(strings));
+}
+
+// 遍历Result
+pub fn for_iter_result() {
+    let strings = vec!["tofu", "93", "18"];
+    // let possible_numbers: Vec<_> = strings.into_iter().map(|s| s.parse::<i32>()).collect();
+    // 使用filter_map会调用一个函数，过滤掉为None的所有结果
+    // let numbers: Vec<_> = strings
+    //     .into_iter()
+    //     .map(|s| s.parse::<i32>())
+    //     .filter_map(result::Result::ok)
+    //     .collect();
+
+    // 使用collect使整个操作失败
+    // Result实现了FromIter，因此，结果的向量Vec<Result<T, E>>可以被转换成结果包裹着向量Result<Vec<_>, E>
+    // 同样的技巧可以对Option使用
+    // let numbers: result::Result<Vec<_>, _> =
+    //     strings.into_iter().map(|s| s.parse::<i32>()).collect();
+
+    // 使用Partition()收集所有合法的值与错误
+    let (numbers, errors): (Vec<_>, Vec<_>) = strings
+        .into_iter()
+        .map(|s| s.parse::<i32>())
+        .partition(result::Result::is_ok);
+    // 当你看着这些结果时，你会发现所有东西还在Result中保存着，要取出它们，还需要一些模版化的代码
+    let numbers: Vec<_> = numbers.into_iter().map(result::Result::unwrap).collect();
+    let errors: Vec<_> = errors.into_iter().map(result::Result::unwrap_err).collect();
+    println!("Numbers: {:?}", numbers);
+    println!("Errors: {:?}", errors);
 }
