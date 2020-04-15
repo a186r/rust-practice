@@ -1,5 +1,5 @@
-use rust_by_example::bin::chapter18::for_boxing;
+use rust_by_example::bin::chapter18::for_wrap_error;
 
 fn main() {
-    for_boxing();
+    for_wrap_error();
 }

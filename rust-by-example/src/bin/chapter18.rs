@@ -116,6 +116,7 @@
 
 use std::fmt::{Error, Formatter};
 use std::intrinsics::write_bytes;
+use std::num::ParseIntError;
 use std::{error, fmt};
 
 // #[derive(Debug)]
@@ -428,6 +429,117 @@ fn print_v2(result: Result_Err<i32>) {
 }
 
 pub fn for_boxing() {
+    let numbers = vec!["42", "93", "18"];
+    let empty = vec![];
+    let strings = vec!["tofu", "93", "18"];
+
+    print(double_first(numbers));
+    print(double_first(empty));
+    print(double_first(strings));
+}
+
+type Result_v1<T> = std::result::Result<T, Box<error::Error>>;
+
+#[derive(Debug)]
+struct EmptyVec_v1;
+
+impl fmt::Display for EmptyVec_v1 {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        write!(f, "invalid first item to double")
+    }
+}
+
+impl error::Error for EmptyVec_v1 {
+    fn description(&self) -> &str {
+        "invalid first item to double"
+    }
+
+    fn cause(&self) -> Option<&error::Error> {
+        None
+    }
+}
+
+// 这次没有把所有的Result和Options串起来
+// 使用?问号立即得到内部值
+fn double_first_v1(vec: Vec<&str>) -> Result_v1<i32> {
+    let first = vec.first().ok_or(EmptyVec_v1)?;
+    let parsed = first.parse::<i32>()?;
+    Ok(2 * parsed)
+}
+
+fn print_v1(result: Result_Err<i32>) {
+    match result {
+        Ok(n) => println!("The first doubled is {}", n),
+        Err(e) => println!("Error: {}", e),
+    }
+}
+
+pub fn for_reenter() {
+    let numbers = vec!["42", "93", "18"];
+    let empty = vec![];
+    let strings = vec!["tofu", "93", "18"];
+
+    print(double_first(numbers));
+    print(double_first(empty));
+    print(double_first(strings));
+}
+
+// 包裹错误
+type Result_v2<T> = std::result::Result<T, DoubleError_v2>;
+
+#[derive(Debug)]
+enum DoubleError_v2 {
+    EmptyVec,
+    //将错误包裹到自己的错误类型中
+    Parse(ParseIntError),
+}
+
+impl fmt::Display for DoubleError_v2 {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        match *self {
+            DoubleError_v2::EmptyVec => write!(f, "please use a vector with at least one element"),
+            DoubleError_v2::Parse(ref e) => e.fmt(f),
+        }
+    }
+}
+
+impl error::Error for DoubleError_v2 {
+    fn description(&self) -> &str {
+        match *self {
+            DoubleError_v2::EmptyVec => "empty vectors not allowed",
+            DoubleError_v2::Parse(ref e) => e.description(),
+        }
+    }
+
+    fn cause(&self) -> Option<&error::Error> {
+        match *self {
+            DoubleError_v2::EmptyVec => None,
+            DoubleError_v2::Parse(ref e) => Some(e),
+        }
+    }
+}
+
+// 实现从ParseIntError到DoubleError的转换
+impl From<ParseIntError> for DoubleError_v2 {
+    fn from(error: ParseIntError) -> Self {
+        DoubleError_v2::Parse(error)
+    }
+}
+
+fn double_first_v3(vec: Vec<&str>) -> Result_v2<i32> {
+    let first = vec.first().ok_or(DoubleError_v2::EmptyVec)?;
+    let parsed = first.parse::<i32>()?;
+    Ok(2 * parsed)
+}
+
+fn print_v3(result: Result_v2<i32>) {
+    match result {
+        Ok(n) => println!("The first doubled is {}", n),
+        Err(e) => println!("Error:{}", e),
+    }
+}
+
+pub fn for_wrap_error() {
     let numbers = vec!["42", "93", "18"];
     let empty = vec![];
     let strings = vec!["tofu", "93", "18"];
