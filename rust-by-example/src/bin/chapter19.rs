@@ -5,6 +5,9 @@
 
 // 被装箱的值可以使用*运算符进行引用，这会移除掉一层装箱
 
+use crate::bin::chapter19::checked::{div, ln, sqrt, MathError, MathResult};
+use std::collections::{HashMap, HashSet};
+use std::hash::Hash;
 use std::mem;
 
 #[allow(dead_code)]
@@ -154,4 +157,237 @@ pub fn for_str() {
     let bob: String = alice.replace("dog", "cat");
     println!("Alice says: {}", alice);
     println!("Bob says: {}", bob);
+}
+
+pub fn for_str_v2() {
+    let raw_str = r"Escapes don't work here: \x3F \u{211D}";
+    println!("{}", raw_str);
+}
+
+// 有时候想捕捉到程序某部分的失败信息，而不是调用panic!;这可使用Option枚举类型来实现
+
+// 不会panic的整数除法
+fn checked_division(dividend: i32, divisor: i32) -> Option<i32> {
+    if divisor == 0 {
+        None
+    } else {
+        // 结果Result被包装到Some取值中
+        Some(dividend / divisor)
+    }
+}
+
+// 此函数处理可能失败的除法
+fn try_division(dividend: i32, divisor: i32) {
+    match checked_division(dividend, divisor) {
+        None => println!("{} / {} failed!", dividend, divisor),
+        Some(quotient) => println!("{} / {} = {}", dividend, divisor, quotient),
+    }
+}
+
+pub fn for_option() {
+    try_division(4, 2);
+    try_division(1, 0);
+
+    // 绑定None到一个变量需要类型标注
+    let none: Option<i32> = None;
+    let _equivalent_none = None::<i32>;
+
+    let optional_float = Some(0f32);
+
+    // 解包Some将取出被包装的值
+    println!(
+        "{:?} unwraps to {:?}",
+        optional_float,
+        optional_float.unwrap()
+    );
+
+    // 解包None将会引发panic!
+    // println!("{:?} unwraps to {:?}", none, none.unwrap());
+}
+
+mod checked {
+    #[derive(Debug)]
+    pub enum MathError {
+        DivisionByZero,
+        NegativeLogarithm,
+        NegativeSquareRoot,
+    }
+
+    pub type MathResult = Result<f64, MathError>;
+
+    pub fn div(x: f64, y: f64) -> MathResult {
+        if y == 0.0 {
+            // 此操作将会失败，与其让程序崩溃，不如将失败的原因包装在Err中返回
+            Err(MathError::DivisionByZero)
+        } else {
+            Ok(x / y)
+        }
+    }
+
+    pub fn sqrt(x: f64) -> MathResult {
+        if x < 0.0 {
+            Err(MathError::NegativeSquareRoot)
+        } else {
+            Ok(x.sqrt())
+        }
+    }
+
+    pub fn ln(x: f64) -> MathResult {
+        if x < 0.0 {
+            Err(MathError::NegativeLogarithm)
+        } else {
+            Ok(x.ln())
+        }
+    }
+
+    // 中间函数
+    // ?问号运算符
+    fn op_(x: f64, y: f64) -> MathResult {
+        let ratio = div(x, y)?;
+        let ln = ln(ratio)?;
+        sqrt(ln)
+    }
+
+    pub fn op_v2(x: f64, y: f64) {
+        match op_(x, y) {
+            Err(why) => panic!(match why {
+                MathError::NegativeLogarithm => "logarithm of negative number",
+                MathError::NegativeSquareRoot => "square root of negative number",
+                MathError::DivisionByZero => "division by zero",
+            }),
+            Ok(value) => println!("{}", value),
+        }
+    }
+}
+
+fn op(x: f64, y: f64) -> f64 {
+    // 三层的match金字塔
+    match checked::div(x, y) {
+        Err(why) => panic!("{:?}", why),
+        Ok(ratio) => match checked::ln(ratio) {
+            Err(why) => panic!("{:?}", why),
+            Ok(ln) => match checked::sqrt(ln) {
+                Err(why) => panic!("{:?}", why),
+                Ok(sqrt) => sqrt,
+            },
+        },
+    }
+}
+
+pub fn for_result() {
+    println!("{}", op(100.0, 1.0));
+}
+
+pub fn for_qmark() {
+    checked::op_v2(1.0, 10.0);
+}
+
+fn call(number: &str) -> &str {
+    match number {
+        "798-1364" => {
+            "We're sorry, the call cannot be completed as dialed. 
+            Please hang up and try again."
+        }
+        "645-7689" => {
+            "Hello, this is Mr. Awesome's Pizza. My name is Fred.
+            What can I get for you today?"
+        }
+        _ => "Hi! Who is this again?",
+    }
+}
+
+pub fn for_hash() {
+    let mut contacts = HashMap::new();
+
+    contacts.insert("Daniel", "798-1364");
+    contacts.insert("Ashley", "645-7689");
+    contacts.insert("Katie", "435-8291");
+    contacts.insert("Robert", "956-1745");
+
+    match contacts.get(&"Daniel") {
+        Some(&number) => println!("Calling Ashley: {}", call(number)),
+        _ => println!("Don't have Ashley's number."),
+    }
+
+    contacts.insert("Deniel", "164-6743");
+
+    match contacts.get(&"Ashley") {
+        Some(&number) => println!("Calling Ashley: {}", call(number)),
+        _ => println!("Don't have Ashley's number."),
+    }
+
+    contacts.remove(&"Ashley");
+
+    for (contact, &number) in contacts.iter() {
+        println!("Calling {}: {}", contact, call(number));
+    }
+}
+
+// 为了实验HashMap中的struct，试着做一个非常简单的用户登录系统
+#[derive(PartialEq, Eq, Hash)]
+struct Account<'a> {
+    username: &'a str,
+    password: &'a str,
+}
+
+struct AccountInfo<'a> {
+    name: &'a str,
+    email: &'a str,
+}
+
+type Accounts<'a> = HashMap<Account<'a>, AccountInfo<'a>>;
+
+fn try_logon<'a>(accounts: &Accounts<'a>, username: &'a str, password: &'a str) {
+    println!("Username: {}", username);
+    println!("Password: {}", password);
+    println!("Attempting logon...");
+
+    let logon = Account { username, password };
+
+    match accounts.get(&logon) {
+        Some(account_info) => {
+            println!("Successful logon!");
+            println!("Name: {}", account_info.name);
+            println!("Email: {}", account_info.email);
+        }
+        _ => println!("Login failed!"),
+    }
+}
+
+pub fn for_altkey() {
+    let mut accounts: Accounts = HashMap::new();
+    let account = Account {
+        username: "j.everyman",
+        password: "password123",
+    };
+    let account_info = AccountInfo {
+        name: "John Everyman",
+        email: "j.everyman@email.com",
+    };
+
+    accounts.insert(account, account_info);
+
+    try_logon(&accounts, "j.everyman", "psasword123");
+    try_logon(&accounts, "j.everyman", "password123");
+}
+
+pub fn for_hashset() {
+    let mut a: HashSet<i32> = vec![1i32, 2, 3].into_iter().collect();
+    let mut b: HashSet<i32> = vec![2i32, 3, 4].into_iter().collect();
+
+    assert!(a.insert(4));
+    assert!(a.contains(&4));
+
+    // 如果值已经存在，那么insert将返回false
+    // assert!(b.insert(4), "Value 4 is already in set B!");
+
+    b.insert(5);
+
+    println!("A: {:?}", a);
+    println!("A: {:?}", b);
+
+    // 乱序打印
+    println!("Union: {:?}", a.union(&b).collect::<Vec<&i32>>());
+
+    println!("Difference: {:?}", a.difference(&b).collect::<Vec<&i32>>());
 }
