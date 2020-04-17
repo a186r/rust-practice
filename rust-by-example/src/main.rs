@@ -1,5 +1,5 @@
-use rust_by_example::bin::chapter20::for_channels;
+use rust_by_example::bin::chapter20::for_pipe;
 
 fn main() {
-    for_channels();
+    for_pipe();
 }
