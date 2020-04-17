@@ -9,6 +9,7 @@ pub mod chapter17;
 pub mod chapter18;
 pub mod chapter19;
 pub mod chapter2;
+pub mod chapter20;
 pub mod chapter3;
 pub mod chapter4;
 pub mod chapter5;
