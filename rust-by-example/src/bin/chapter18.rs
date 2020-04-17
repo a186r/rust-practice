@@ -507,7 +507,7 @@ impl error::Error for DoubleError_v2 {
     fn description(&self) -> &str {
         match *self {
             DoubleError_v2::EmptyVec => "empty vectors not allowed",
-            DoubleError_v2::Parse(ref e) => e.description(),
+            DoubleError_v2::Parse(ref e) => "sdfa",
         }
     }
 

@@ -1,4 +1,3 @@
-use core::num::dec2flt::rawfp::encode_normal;
 use std::error::Error;
 use std::fs::{File, OpenOptions};
 use std::io::prelude::*;
@@ -122,7 +121,7 @@ pub fn for_open() {
 
     // 以只读的方式打开路径
     let mut file = match File::open(&path) {
-        Err(why) => panic!("couldn't open {}: {}", display, why.description()),
+        Err(why) => panic!("couldn't open {}: {}", display, why),
         Ok(file) => file,
     };
 
@@ -267,15 +266,15 @@ pub fn for_fs() {
 
     // 读取目录的内容
     match fs::read_dir("a") {
-        Err(why) => println!("{}", why.kind()),
-        Ok(s) => println!("> {}", s),
+        Err(why) => println!("{:?}", why.kind()),
+        Ok(s) => println!("> {:?}", s),
     }
 
     // 删除一个文件
     fs::remove_file("a/c/e.txt").unwrap_or_else(|why| println!());
 
     // 移除一个空目录
-    fs::remove_dir("a/c/d").unwrap_or_else(|why| println!("{}", why.kind()));
+    fs::remove_dir("a/c/d").unwrap_or_else(|why| println!("{:?}", why.kind()));
 }
 
 // 程序参数
